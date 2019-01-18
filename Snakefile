@@ -1,22 +1,30 @@
-# samples = ['SampleA','SampleB']
 configfile: 'config.yaml'
+
+INPUT_DIR = config['dirs']['input']
+OUTPUT_DIR = config['dirs']['output']
+
 rule all:
-    input: 'outputs/04-multiqc/multiqc.html'
+    input: OUTPUT_DIR + '/04-multiqc/multiqc.html'
 
 rule fastqc_seq:
-    input: 'inputs/{Sample}.R1.fastq.gz','inputs/{Sample}.R2.fastq.gz'
-    output:'outputs/01-fastqc_seq/{Sample}.fastqc_seq.html'
+    input: INPUT_DIR + '/{sample}.{read}.fastq.gz'
+    output: OUTPUT_DIR + '/01-fastqc_seq/{sample}.{read}.fastqc_seq.html'
     shell: 'cat {input} > {output}'
+
 rule align:
-    input: 'inputs/{sample_name}.R1.fastq.gz','inputs/{sample_name}.R2.fastq.gz',
-    output:'outputs/02-align/{sample_name}.align.bam'
+    input: INPUT_DIR + '/{sample}.R1.fastq.gz', INPUT_DIR + '/{sample}.R2.fastq.gz',
+    output: OUTPUT_DIR + '/02-align/{sample}.align.bam'
     shell: 'cat {input} > {output}'
+
 rule fastqc_align:
-    input:'outputs/02-align/{sample}.align.bam'
-    output: 'outputs/03-fastqc_align/{sample}.fastqc_align.html'
+    input: OUTPUT_DIR + '/02-align/{sample}.align.bam'
+    output: OUTPUT_DIR + '/03-fastqc_align/{sample}.fastqc_align.html'
     shell: 'cat {input} >  {output}'
+
 rule multiqc:
-    input: expand('outputs/01-fastqc_seq/{sample}.fastqc_seq.html', sample=config['samples']),
-           expand('outputs/03-fastqc_align/{sample}.fastqc_align.html', sample=config['samples']),
-    output: 'outputs/04-multiqc/multiqc.html'
+    input: expand(OUTPUT_DIR + '/01-fastqc_seq/{sample}.{read}.fastqc_seq.html', \
+                  sample=config['samples'], \
+                  read=['R1', 'R2']),
+           expand(OUTPUT_DIR + '/03-fastqc_align/{sample}.fastqc_align.html', sample=config['samples']),
+    output: OUTPUT_DIR + '/04-multiqc/multiqc.html'
     shell: 'cat {input} > {output}'
