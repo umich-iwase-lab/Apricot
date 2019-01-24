@@ -1,5 +1,5 @@
 dirs:
-  input: ../inputs
+  input: test/inputs
   output: ../outputs
 
 samples:
