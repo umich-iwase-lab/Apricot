@@ -1,6 +1,12 @@
 dirs:
   input: test/inputs
   output: ../outputs
+  reference: ../reference/mm10_ercc
+
+genome_reference:
+  fasta: mm10_ercc.fa
+  gtf: mm10_ercc.gencode.vM17.annotation.exon.gtf
+  star_genome_dir: star_genome
 
 samples:
   - SampleA
