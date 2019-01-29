@@ -5,15 +5,16 @@ OUTPUT_DIR = config['dirs']['output']
 REFERENCE_DIR = config['dirs']['reference'] 
 
 rule all:
-    input: OUTPUT_DIR + '/04-multiqc/multiqc.html'
+    input: OUTPUT_DIR + '/03-umi_tools_dedup/SampleB_dedup.bam',
+           expand(OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html', sample=config['samples'], read=['R1', 'R2'])
 
 rule umi_tools_extract:
     input: 
         read1 = INPUT_DIR + '/{sample}.R1.fastq.gz',
         read2 = INPUT_DIR + '/{sample}.R2.fastq.gz'
     output: 
-        read1 = OUTPUT_DIR + '/02-umitools_markDuplicates/processed.{sample}.R1.fastq.gz',
-        read2 = OUTPUT_DIR + '/02-umitools_markDuplicates/processed.{sample}.R2.fastq.gz'
+        read1 = OUTPUT_DIR + '/01-umitools_markDuplicates/processed.{sample}.R1.fastq.gz',
+        read2 = OUTPUT_DIR + '/01-umitools_markDuplicates/processed.{sample}.R2.fastq.gz'
     log: OUTPUT_DIR + '/02-umitools_markDuplicates/.log/{sample}.umitools_markDuplicates.log'
     shell:'''(
 umi_tools extract \
@@ -26,15 +27,15 @@ umi_tools extract \
 ) 2>&1 | tee {log}'''
 
 rule fastqc_seq:
-    input: INPUT_DIR + '/{sample}.{read}.fastq.gz'
-    output: OUTPUT_DIR + '/01-fastqc_seq/{sample}.{read}_fastqc.html'
+    input: OUTPUT_DIR + '/01-umitools_markDuplicates/processed.{sample}.{read}.fastq.gz',
+    output: OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html', 
     params:
-        fastqc_dir= OUTPUT_DIR+ '/01-fastqc_seq/'
+        fastqc_dir= OUTPUT_DIR+ '/02-fastqc_seq/'
     shell: 'fastqc {input} -o {params.fastqc_dir}'
 
 rule star_align:
-    input: OUTPUT_DIR + '/02-umitools_markDuplicates/processed.{sample}.R1.fastq.gz',
-           OUTPUT_DIR + '/02-umitools_markDuplicates/processed.{sample}.R2.fastq.gz',
+    input: OUTPUT_DIR + '/01-umitools_markDuplicates/processed.{sample}.R1.fastq.gz',
+           OUTPUT_DIR + '/01-umitools_markDuplicates/processed.{sample}.R2.fastq.gz',
     output: OUTPUT_DIR + '/02-star_align/{sample}.star_align.bam'
     log: OUTPUT_DIR + '/02-star_align/.log/{sample}.star_align.log'
     threads: 12
@@ -72,11 +73,16 @@ ln --symbolic {params.star_bam_file} {params.output_bam_file}
 popd
 ) 2>&1 | tee {log}
     '''
-
-rule umi_tools_dedup:
+rule indexing:
     input: OUTPUT_DIR + '/02-star_align/{sample}.star_align.bam'
+    output: OUTPUT_DIR + '/02-star_align/{sample}.star_align.bam.bai',
+    shell: 'samtools index {input}'
+rule umi_tools_dedup:
+    input: 
+        bam = OUTPUT_DIR + '/02-star_align/{sample}.star_align.bam',
+        bai = OUTPUT_DIR + '/02-star_align/{sample}.star_align.bam.bai'
     output: OUTPUT_DIR + '/03-umi_tools_dedup/{sample}_dedup.bam'
-    shell: 'umi_tools dedup -I {input} --paired -S {output}'
+    shell: 'umi_tools dedup -I {input.bam} --paired -S {output}'
 
 rule fastqc_align:
     input: OUTPUT_DIR + '/02-star_align/{sample}.star_align.bam'
