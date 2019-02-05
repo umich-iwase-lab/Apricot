@@ -9,6 +9,9 @@ rule all:
            expand(OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html', sample=config['samples'], read=['R1', 'R2']),
            expand(OUTPUT_DIR + '/04-fastqc_align/{sample}_dedup_fastqc.html', sample=config['samples']),
            OUTPUT_DIR + '/05-multiqc/multiqc_report.html',
+           expand(OUTPUT_DIR + '/06-stringtie/{sample}.gtf',sample=config['samples']),
+           gene_counts = OUTPUT_DIR + '/06-stringtie/gene_count_matrix.csv',
+           transcript_counts = OUTPUT_DIR + '/06-stringtie/transcript_count_matrix.csv',
 
 rule umi_tools_extract:
     input: 
@@ -95,34 +98,27 @@ rule fastqc_align:
     shell: 'fastqc {input} -o {params.fastqc_dir}'
 
 rule multiqc:
-    input: OUTPUT_DIR + '/04-fastqc_align/{sample}_dedup_fastqc.html',
-           OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html',
+    input: expand(OUTPUT_DIR + '/04-fastqc_align/{sample}_dedup_fastqc.html',sample=config['samples']),
+           expand(OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html', sample=config['samples'], read=['R1', 'R2']),
     output: OUTPUT_DIR + '/05-multiqc/multiqc_report.html'
     params:
         multiqc_dir= OUTPUT_DIR + '/05-multiqc/'
     shell: 'multiqc {OUTPUT_DIR} -o {params.multiqc_dir}'
 
-rule align_stringtie:
+rule stringtie:
     input:
-#        reference_checksum = CONFIG_CHECKSUMS_DIR + 'config-references.watermelon.md5',
         bams = OUTPUT_DIR + '/02-star_align/{sample}.star_align.bam',
         gtf = REFERENCE_DIR + '/' + config['genome_reference']['gtf'],
     output:
-        gtf = OUTPUT_DIR + '06-stringtie/{sample}.gtf',
-        ballgown = expand(OUTPUT_DIR + '06-stringtie/ballgown/{sample}/{bgown_prefixes}.ctab',#
-                          sample='{sample}',
-                          bgown_prefixes=['e2t','e_data','i2t','i_data','t_data']),
-        prep_input = OUTPUT_DIR + '06-stringtie/{sample}_prepDE_input.txt'
+        gtf = OUTPUT_DIR + '/06-stringtie/{sample}.gtf',
+        prep_input = OUTPUT_DIR + '/06-stringtie/{sample}_prepDE_input.txt'
     log:
-        OUTPUT_DIR + '06-stringtie/.log/{sample}.align_stringtie.log'
+        OUTPUT_DIR + '/06-stringtie/.log/{sample}.stringtie.log'
     benchmark:
-        'benchmarks/{sample}.align_stringtie.benchmark.txt'
-    conda:
-        'envs/align_hisat2_stringtie.yaml'
+        OUTPUT_DIR + '/benchmarks/{sample}.stringtie.benchmark.txt'
     params:
         sample = '{sample}',
-#        strand_flag = rnaseq_snakefile_helper.strand_option_stringtie(config),
-        ballgown_path = OUTPUT_DIR + '06-stringtie/ballgown/{sample}/'
+        strand_flag = config['stringtie_strand_flag'],
     threads: 8
     shell:
         '''(
@@ -131,8 +127,37 @@ rule align_stringtie:
         stringtie {input.bams} \
             -p {threads} \
             -G {input.gtf} \
-            -b {params.ballgown_path} \
             -e \
             {params.strand_flag} \
             -o {output.gtf}
         ) 2>&1 | tee {log}'''
+
+rule stringtie_prepDE:
+    input:
+        gtfs = expand(OUTPUT_DIR + '/06-stringtie/{sample}.gtf',
+                      sample=config['samples']),
+        prep_input = expand(OUTPUT_DIR + '/06-stringtie/{sample}_prepDE_input.txt',
+                            sample=config['samples']),
+    output:
+        prep_output = OUTPUT_DIR + '/06-stringtie/prepDE_input.txt',
+        gene_counts = OUTPUT_DIR + '/06-stringtie/gene_count_matrix.csv',
+        transcript_counts = OUTPUT_DIR + '/06-stringtie/transcript_count_matrix.csv',
+    log:
+        OUTPUT_DIR + '/06-stringtie/.log/stringtie_prepDE.log'
+    benchmark:
+        OUTPUT_DIR + '/benchmarks/stringtie_prepDE.benchmark.txt'
+    params:
+        length = config['stringtie_read_length'],
+        prep_input = ' '.join(expand(OUTPUT_DIR + '/06-stringtie/{sample}_prepDE_input.txt',
+                                     sample=config['samples']))
+    shell:
+        '''(
+        cat {params.prep_input} > {output.prep_output}
+
+        prepDE.py \
+            -i {output.prep_output} \
+            -g {output.gene_counts} \
+            -t {output.transcript_counts} \
+            -l {params.length}
+        ) 2>&1 | tee {log}'''
+

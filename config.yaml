@@ -1,3 +1,9 @@
+stringtie_read_length: 50
+stringtie_strand_flag: ''
+# '--rf'    Assumes a stranded library fr-firststrand
+# '--fr'    Assumes a stranded library fr-secondstrand
+# ''        Leave blank if unstranded 
+
 dirs:
   input: test/inputs
   output: ../outputs
