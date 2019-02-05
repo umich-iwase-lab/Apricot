@@ -15,6 +15,10 @@ genome_reference:
   star_genome_dir: star_genome
 
 samples:
-  - SampleA
-  - SampleB
+  SampleA:
+    - SampleA.R1.fastq.gz
+    - SampleA.R2.fastq.gz
+  SampleB:
+    - SampleB.R1.fastq.gz
+    - SampleB.R2.fastq.gz
 # - SampleC

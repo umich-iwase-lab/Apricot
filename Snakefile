@@ -5,22 +5,40 @@ OUTPUT_DIR = config['dirs']['output']
 REFERENCE_DIR = config['dirs']['reference'] 
 
 rule all:
-    input: OUTPUT_DIR + '/03-umi_tools_dedup/SampleB_dedup.bam',
-           expand(OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html', sample=config['samples'], read=['R1', 'R2']),
-           expand(OUTPUT_DIR + '/04-fastqc_align/{sample}_dedup_fastqc.html', sample=config['samples']),
-           OUTPUT_DIR + '/05-multiqc/multiqc_report.html',
-           expand(OUTPUT_DIR + '/06-stringtie/{sample}.gtf',sample=config['samples']),
-           gene_counts = OUTPUT_DIR + '/06-stringtie/gene_count_matrix.csv',
-           transcript_counts = OUTPUT_DIR + '/06-stringtie/transcript_count_matrix.csv',
+    input: 
+           #expand(OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html', sample=config['samples'], read=['R1', 'R2']),
+           #expand(OUTPUT_DIR + '/04-fastqc_align/{sample}_dedup_fastqc.html', sample=config['samples']),
+           #OUTPUT_DIR + '/05-multiqc/multiqc_report.html',
+           #expand(OUTPUT_DIR + '/06-stringtie/{sample}.gtf',sample=config['samples']),
+           #gene_counts = OUTPUT_DIR + '/06-stringtie/gene_count_matrix.csv',
+           #transcript_counts = OUTPUT_DIR + '/06-stringtie/transcript_count_matrix.csv',
+           expand(OUTPUT_DIR + '/01-umitools_markDuplicates/processed.{sample}', sample=config['samples']['SampleA'])
+
+rule normalize_read_names:
+    input:
+        read1 = lambda wildcards: INPUT_DIR + '/' + config['samples'][wildcards.sample][0],
+        read2 = lambda wildcards: INPUT_DIR + '/' + config['samples'][wildcards.sample][1],
+    output:
+        read1 = OUTPUT_DIR + '/00-normalize_read_names/{sample}.R1.fastq.gz',
+        read2 = OUTPUT_DIR + '/00-normalize_read_names/{sample}.R2.fastq.gz',
+    shell: '''
+ln -s {input.read1} {output.read1}
+ln -s {input.read2} {output.read2}
+    '''
+
 
 rule umi_tools_extract:
     input: 
-        read1 = INPUT_DIR + '/{sample}.R1.fastq.gz',
-        read2 = INPUT_DIR + '/{sample}.R2.fastq.gz'
+        read1 = INPUT_DIR + '/' + config['samples'][{sample}][0]
+        read2 = INPUT_DIR + '/' + config['samples'][{sample}][1]
     output: 
-        read1 = OUTPUT_DIR + '/01-umitools_markDuplicates/processed.{sample}.R1.fastq.gz',
-        read2 = OUTPUT_DIR + '/01-umitools_markDuplicates/processed.{sample}.R2.fastq.gz'
+        read1 = OUTPUT_DIR + '/01-umitools_markDuplicates/processed.' + config['samples'][{sample}][0],
+        read2 = OUTPUT_DIR + '/01-umitools_markDuplicates/processed.' + config['samples'][{sample}][1]'
+#SampleA.R1.fastq.gz
+#SampleA.R2.fastq.gz
+
     log: OUTPUT_DIR + '/02-umitools_markDuplicates/.log/{sample}.umitools_markDuplicates.log'
+    benchmark: OUTPUT_DIR + '/benchmarks/{sample}.umitools_markDuplicates.benchmark.txt'
     shell:'''(
 umi_tools extract \
 --stdin={input.read1} \
@@ -36,6 +54,7 @@ rule fastqc_seq:
     output: OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html', 
     params:
         fastqc_dir= OUTPUT_DIR+ '/02-fastqc_seq/'
+    benchmark: OUTPUT_DIR + '/benchmarks/{sample}.{read}.fastqc_seq.benchmark.txt'
     shell: 'fastqc {input} -o {params.fastqc_dir}'
 
 rule star_align:
@@ -43,6 +62,7 @@ rule star_align:
            OUTPUT_DIR + '/01-umitools_markDuplicates/processed.{sample}.R2.fastq.gz',
     output: OUTPUT_DIR + '/02-star_align/{sample}.star_align.bam'
     log: OUTPUT_DIR + '/02-star_align/.log/{sample}.star_align.log'
+    benchmark: OUTPUT_DIR + '/benchmarks/{sample}.star_align.benchmark.txt'
     threads: 12
     params:
         genomeDir = REFERENCE_DIR + '/' + config['genome_reference']['star_genome_dir'],
@@ -81,18 +101,21 @@ popd
 rule indexing:
     input: OUTPUT_DIR + '/02-star_align/{sample}.star_align.bam'
     output: OUTPUT_DIR + '/02-star_align/{sample}.star_align.bam.bai',
+    benchmark: OUTPUT_DIR + '/benchmarks/{sample}.indexing.benchmark.txt'
     shell: 'samtools index {input}'
 rule umi_tools_dedup:
     input: 
         bam = OUTPUT_DIR + '/02-star_align/{sample}.star_align.bam',
         bai = OUTPUT_DIR + '/02-star_align/{sample}.star_align.bam.bai'
-    log: OUTPUT_DIR + '/03-umi_tools_dedup/.log/{sample}_dedup.log'
+    log: OUTPUT_DIR + '/03-umi_tools_dedup/.log/{sample}.umi_tools_dedup.log'
     output: OUTPUT_DIR + '/03-umi_tools_dedup/{sample}_dedup.bam'
+    benchmark: OUTPUT_DIR + '/benchmarks/{sample}.umi_tools_dedup.benchmark.txt'
     shell: '(umi_tools dedup -I {input.bam} --paired -S {output}) 2>&1 | tee {log}'
 
 rule fastqc_align:
     input: OUTPUT_DIR + '/03-umi_tools_dedup/{sample}_dedup.bam'
     output: OUTPUT_DIR + '/04-fastqc_align/{sample}_dedup_fastqc.html'
+    benchmark: OUTPUT_DIR + '/benchmarks/{sample}.fastqc_align.benchmark.txt'
     params:
         fastqc_dir= OUTPUT_DIR+ '/04-fastqc_align/'
     shell: 'fastqc {input} -o {params.fastqc_dir}'
@@ -101,6 +124,7 @@ rule multiqc:
     input: expand(OUTPUT_DIR + '/04-fastqc_align/{sample}_dedup_fastqc.html',sample=config['samples']),
            expand(OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html', sample=config['samples'], read=['R1', 'R2']),
     output: OUTPUT_DIR + '/05-multiqc/multiqc_report.html'
+    benchmark: OUTPUT_DIR + '/benchmarks/multiqc.benchmark.txt'
     params:
         multiqc_dir= OUTPUT_DIR + '/05-multiqc/'
     shell: 'multiqc {OUTPUT_DIR} -o {params.multiqc_dir}'
