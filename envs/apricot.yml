@@ -9,6 +9,6 @@ dependencies:
   - multiqc=1.7
   - star=2.6.1b
   - stringtie=1.3.4
-  - umitools=0.3.4
+  - umi_tools=0.5.5
 prefix: /miniconda3/envs/apricot
 
