@@ -22,8 +22,8 @@ rule normalize_read_names:
         read1 = OUTPUT_DIR + '/00-normalize_read_names/{sample}.R1.fastq.gz',
         read2 = OUTPUT_DIR + '/00-normalize_read_names/{sample}.R2.fastq.gz',
     shell: '''
-ln -sr {input.read1} {output.read1}
-ln -sr {input.read2} {output.read2}
+ln -fsr {input.read1} {output.read1}
+ln -fsr {input.read2} {output.read2}
     '''
 
 
