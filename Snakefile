@@ -7,11 +7,16 @@ REFERENCE_DIR = config['dirs']['reference']
 rule all:
     input:
         expand(OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html',
-               sample=config['samples'], read=['R1', 'R2']),
-        expand(OUTPUT_DIR + '/05-fastqc_align/{sample}_fastqc.html',
-               sample=config['samples']),
-        OUTPUT_DIR + '/07-stringtie_prepDE/gene_count_matrix.stringtie_prepDE.csv',
-        OUTPUT_DIR + '/07-stringtie_prepDE/transcript_count_matrix.stringtie_prepDE.csv',
+            sample=config['samples'],
+            read=['R1', 'R2']),
+        expand(OUTPUT_DIR + '/04-star_align_flagstat/{sample}.star_align_flagstat.flagstat',
+            sample=config['samples']),
+        expand(OUTPUT_DIR + '/06-umi_tools_dedup_flagstat/{sample}.umi_tools_dedup_flagstat.flagstat',
+            sample=config['samples']),
+        expand(OUTPUT_DIR + '/07-fastqc_align/{sample}_fastqc.html',
+            sample=config['samples']),
+        OUTPUT_DIR + '/09-stringtie_prepDE/gene_count_matrix.stringtie_prepDE.csv',
+        OUTPUT_DIR + '/09-stringtie_prepDE/transcript_count_matrix.stringtie_prepDE.csv',
         #OUTPUT_DIR + '/05-multiqc/multiqc_report.html',
 
 rule normalize_read_names:
@@ -47,19 +52,28 @@ umi_tools extract \
 ) 2>&1 | tee {log}'''
 
 rule fastqc_seq:
-    input: OUTPUT_DIR + '/01-umi_tools_extract/processed.{sample}.{read}.fastq.gz',
-    output: OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html',
+    input:
+        OUTPUT_DIR + '/01-umi_tools_extract/processed.{sample}.{read}.fastq.gz',
+    output:
+        OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html',
+    log:
+        OUTPUT_DIR + '/02-fastqc_seq/.log/processed.{sample}.{read}_fastqc.log',
+    benchmark:
+        OUTPUT_DIR + '/benchmarks/{sample}.{read}.fastqc_seq.benchmark.txt'
     params:
         fastqc_dir= OUTPUT_DIR+ '/02-fastqc_seq/'
-    benchmark: OUTPUT_DIR + '/benchmarks/{sample}.{read}.fastqc_seq.benchmark.txt'
-    shell: 'fastqc {input} -o {params.fastqc_dir}'
+    shell: '(fastqc {input} -o {params.fastqc_dir}) 2>&1 | tee {log}'
 
 rule star_align:
-    input: OUTPUT_DIR + '/01-umi_tools_extract/processed.{sample}.R1.fastq.gz',
-           OUTPUT_DIR + '/01-umi_tools_extract/processed.{sample}.R2.fastq.gz',
-    output: OUTPUT_DIR + '/03-star_align/{sample}.star_align.bam'
-    log: OUTPUT_DIR + '/03-star_align/.log/{sample}.star_align.log'
-    benchmark: OUTPUT_DIR + '/benchmarks/{sample}.star_align.benchmark.txt'
+    input:
+        OUTPUT_DIR + '/01-umi_tools_extract/processed.{sample}.R1.fastq.gz',
+        OUTPUT_DIR + '/01-umi_tools_extract/processed.{sample}.R2.fastq.gz',
+    output:
+        OUTPUT_DIR + '/03-star_align/{sample}.star_align.bam'
+    log:
+        OUTPUT_DIR + '/03-star_align/.log/{sample}.star_align.log'
+    benchmark:
+        OUTPUT_DIR + '/benchmarks/{sample}.star_align.benchmark.txt'
     threads: 12
     params:
         genomeDir = REFERENCE_DIR + '/' + config['genome_reference']['star_genome_dir'],
@@ -95,60 +109,78 @@ ln --symbolic {params.star_bam_file} {params.output_bam_file}
 popd
 ) 2>&1 | tee {log}
     '''
+
 rule star_align_index:
-    input: OUTPUT_DIR + '/03-star_align/{sample}.star_align.bam'
-    output: OUTPUT_DIR + '/03-star_align/{sample}.star_align.bam.bai',
-    log: OUTPUT_DIR + '/03-star_align/.log/{sample}.star_align_index.log',
-    benchmark: OUTPUT_DIR + '/benchmarks/{sample}.indexing.benchmark.txt'
+    input:
+        OUTPUT_DIR + '/03-star_align/{sample}.star_align.bam'
+    output:
+        OUTPUT_DIR + '/03-star_align/{sample}.star_align.bam.bai',
+    log:
+        OUTPUT_DIR + '/03-star_align/.log/{sample}.star_align_index.log',
+    benchmark:
+        OUTPUT_DIR + '/benchmarks/{sample}.indexing.benchmark.txt'
     shell: '(samtools index {input}) 2>&1 | tee {log}'
+
+rule star_align_flagstat:
+    input:
+        OUTPUT_DIR + '/03-star_align/{sample}.star_align.bam'
+    output:
+        OUTPUT_DIR + '/04-star_align_flagstat/{sample}.star_align_flagstat.flagstat',
+    log:
+        OUTPUT_DIR + '/04-star_align_flagstat/.log/{sample}.star_align_flagstat.log'
+    benchmark:
+        OUTPUT_DIR + '/benchmarks/{sample}.star_align_flagstat.benchmark.txt'
+    shell: '(samtools flagstat {input} > {output}) 2>&1 | tee {log}'
 
 rule umi_tools_dedup:
     input:
         bam = OUTPUT_DIR + '/03-star_align/{sample}.star_align.bam',
         bai = OUTPUT_DIR + '/03-star_align/{sample}.star_align.bam.bai'
     output:
-        OUTPUT_DIR + '/04-umi_tools_dedup/{sample}.umi_tools_dedup.bam'
+        OUTPUT_DIR + '/05-umi_tools_dedup/{sample}.umi_tools_dedup.bam'
     log:
-        OUTPUT_DIR + '/04-umi_tools_dedup/.log/{sample}.umi_tools_dedup.log'
+        OUTPUT_DIR + '/05-umi_tools_dedup/.log/{sample}.umi_tools_dedup.log'
     benchmark:
         OUTPUT_DIR + '/benchmarks/{sample}.umi_tools_dedup.benchmark.txt'
     shell: '(umi_tools dedup -I {input.bam} --paired -S {output}) 2>&1 | tee {log}'
 
+rule umi_tools_dedup_flagstat:
+    input:
+        OUTPUT_DIR + '/05-umi_tools_dedup/{sample}.umi_tools_dedup.bam'
+    output:
+        OUTPUT_DIR + '/06-umi_tools_dedup_flagstat/{sample}.umi_tools_dedup_flagstat.flagstat',
+    log:
+        OUTPUT_DIR + '/06-umi_tools_dedup_flagstat/.log/{sample}.umi_tools_dedup_flagstat.log'
+    benchmark:
+        OUTPUT_DIR + '/benchmarks/{sample}.umi_tools_dedup_flagstat.benchmark.txt'
+    shell: '(samtools flagstat {input} > {output}) 2>&1 | tee {log}'
+
 rule fastqc_align:
     input:
-        OUTPUT_DIR + '/04-umi_tools_dedup/{sample}.umi_tools_dedup.bam',
+        OUTPUT_DIR + '/05-umi_tools_dedup/{sample}.umi_tools_dedup.bam',
     output:
-        OUTPUT_DIR + '/05-fastqc_align/{sample}_fastqc.html',
+        OUTPUT_DIR + '/07-fastqc_align/{sample}_fastqc.html',
     log:
-        OUTPUT_DIR + '/05-fastqc_align/.log/{sample}.fastqc_align.log'
+        OUTPUT_DIR + '/07-fastqc_align/.log/{sample}.fastqc_align.log'
     benchmark:
         OUTPUT_DIR + '/benchmarks/{sample}.fastqc_align.benchmark.txt'
     params:
-        symlink = OUTPUT_DIR + '/05-fastqc_align/{sample}.bam',
-        fastqc_dir= OUTPUT_DIR+ '/05-fastqc_align/',
+        symlink = OUTPUT_DIR + '/07-fastqc_align/{sample}.bam',
+        fastqc_dir= OUTPUT_DIR+ '/07-fastqc_align/',
     shell: '''(
 ln -fsr {input} {params.symlink}
 fastqc {params.symlink} -o {params.fastqc_dir}
 ) 2>&1 | tee {log}'''
 
-# rule multiqc:
-#     input: expand(OUTPUT_DIR + '/05-fastqc_align/{sample}_dedup_fastqc.html',sample=config['samples']),
-#            expand(OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html', sample=config['samples'], read=['R1', 'R2']),
-#     output: OUTPUT_DIR + '/05-multiqc/multiqc_report.html'
-#     benchmark: OUTPUT_DIR + '/benchmarks/multiqc.benchmark.txt'
-#     params:
-#         multiqc_dir= OUTPUT_DIR + '/05-multiqc/'
-#     shell: 'multiqc {OUTPUT_DIR} -o {params.multiqc_dir}'
-
 rule stringtie:
     input:
-        bam = OUTPUT_DIR + '/04-umi_tools_dedup/{sample}.umi_tools_dedup.bam',
+        bam = OUTPUT_DIR + '/05-umi_tools_dedup/{sample}.umi_tools_dedup.bam',
         gtf = REFERENCE_DIR + '/' + config['genome_reference']['gtf'],
     output:
-        gtf = OUTPUT_DIR + '/06-stringtie/{sample}.gtf',
-        prep_input = OUTPUT_DIR + '/06-stringtie/{sample}_prepDE_input.txt'
+        gtf = OUTPUT_DIR + '/08-stringtie/{sample}.gtf',
+        prep_input = OUTPUT_DIR + '/08-stringtie/{sample}_prepDE_input.txt'
     log:
-        OUTPUT_DIR + '/06-stringtie/.log/{sample}.stringtie.log'
+        OUTPUT_DIR + '/08-stringtie/.log/{sample}.stringtie.log'
     benchmark:
         OUTPUT_DIR + '/benchmarks/{sample}.stringtie.benchmark.txt'
     params:
@@ -167,22 +199,22 @@ stringtie {input.bam} \
 
 rule stringtie_prepDE:
     input:
-        gtfs = expand(OUTPUT_DIR + '/06-stringtie/{sample}.gtf',
+        gtfs = expand(OUTPUT_DIR + '/08-stringtie/{sample}.gtf',
                       sample=config['samples']),
-        prep_input = expand(OUTPUT_DIR + '/06-stringtie/{sample}_prepDE_input.txt',
+        prep_input = expand(OUTPUT_DIR + '/08-stringtie/{sample}_prepDE_input.txt',
                             sample=config['samples']),
     output:
-        gene_counts = OUTPUT_DIR + '/07-stringtie_prepDE/gene_count_matrix.stringtie_prepDE.csv',
-        transcript_counts = OUTPUT_DIR + '/07-stringtie_prepDE/transcript_count_matrix.stringtie_prepDE.csv',
+        gene_counts = OUTPUT_DIR + '/09-stringtie_prepDE/gene_count_matrix.stringtie_prepDE.csv',
+        transcript_counts = OUTPUT_DIR + '/09-stringtie_prepDE/transcript_count_matrix.stringtie_prepDE.csv',
     log:
-        OUTPUT_DIR + '/07-stringtie_prepDE/.log/stringtie_prepDE.log'
+        OUTPUT_DIR + '/09-stringtie_prepDE/.log/stringtie_prepDE.log'
     benchmark:
         OUTPUT_DIR + '/benchmarks/stringtie_prepDE.benchmark.txt'
     params:
         length = config['stringtie_read_length'],
-        prep_input = ' '.join(expand(OUTPUT_DIR + '/06-stringtie/{sample}_prepDE_input.txt',
+        prep_input = ' '.join(expand(OUTPUT_DIR + '/08-stringtie/{sample}_prepDE_input.txt',
                                      sample=config['samples'])),
-        prep_config = OUTPUT_DIR + '/07-stringtie_prepDE/prepDE_config.txt',
+        prep_config = OUTPUT_DIR + '/09-stringtie_prepDE/prepDE_config.txt',
     shell:
         '''(
 cat {params.prep_input} > {params.prep_config}
@@ -192,3 +224,12 @@ prepDE.py \
     -t {output.transcript_counts} \
     -l {params.length}
 ) 2>&1 | tee {log}'''
+
+# rule multiqc:
+#     input: expand(OUTPUT_DIR + '/05-fastqc_align/{sample}_dedup_fastqc.html',sample=config['samples']),
+#            expand(OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html', sample=config['samples'], read=['R1', 'R2']),
+#     output: OUTPUT_DIR + '/05-multiqc/multiqc_report.html'
+#     benchmark: OUTPUT_DIR + '/benchmarks/multiqc.benchmark.txt'
+#     params:
+#         multiqc_dir= OUTPUT_DIR + '/05-multiqc/'
+#     shell: 'multiqc {OUTPUT_DIR} -o {params.multiqc_dir}'
