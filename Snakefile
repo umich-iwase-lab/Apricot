@@ -185,7 +185,7 @@ rule stringtie:
         OUTPUT_DIR + '/benchmarks/{sample}.stringtie.benchmark.txt'
     params:
         sample = '{sample}',
-        strand_flag = config['stringtie_strand_flag'],
+        strand_flag = config['stringtie']['strand_flag'],
     threads: 8
     shell:'''(
 echo {params.sample} {output.gtf} > {output.prep_input}
@@ -211,7 +211,7 @@ rule stringtie_prepDE:
     benchmark:
         OUTPUT_DIR + '/benchmarks/stringtie_prepDE.benchmark.txt'
     params:
-        length = config['stringtie_read_length'],
+        length = config['stringtie']['read_length'],
         prep_input = ' '.join(expand(OUTPUT_DIR + '/08-stringtie/{sample}_prepDE_input.txt',
                                      sample=config['samples'])),
         prep_config = OUTPUT_DIR + '/09-stringtie_prepDE/prepDE_config.txt',

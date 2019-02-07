@@ -1,0 +1,55 @@
+stringtie:
+  read_length: 150
+  #strand_flag
+  # '--rf'    Assumes a stranded library fr-firststrand, e.g. Trueseq
+  # '--fr'    Assumes a stranded library fr-secondstrand
+  # ''        Leave blank if unstranded
+  strand_flag: '--rf'
+
+dirs:
+  input: ../project_vallianatos/inputs
+  output: ../project_vallianatos/outputs
+  reference: ../reference/mm10_ercc
+
+genome_reference:
+  fasta: mm10_ercc.fa
+  gtf: mm10_ercc.gencode.vM17.annotation.exon.gtf
+  star_genome_dir: star_genome
+
+samples:
+  Sample01:
+    - Sample1_R1_001.fastq.gz
+    - Sample1_R2_001.fastq.gz
+  Sample02:
+    - Sample2_R1_001.fastq.gz
+    - Sample2_R2_001.fastq.gz
+  Sample03:
+    - Sample3_R1_001.fastq.gz
+    - Sample3_R2_001.fastq.gz
+  Sample04:
+    - Sample4_R1_001.fastq.gz
+    - Sample4_R2_001.fastq.gz
+  Sample05:
+    - Sample5_R1_001.fastq.gz
+    - Sample5_R2_001.fastq.gz
+  Sample06:
+    - Sample6_R1_001.fastq.gz
+    - Sample6_R2_001.fastq.gz
+  Sample07:
+    - Sample7_R1_001.fastq.gz
+    - Sample7_R2_001.fastq.gz
+  Sample08:
+    - Sample8_R1_001.fastq.gz
+    - Sample8_R2_001.fastq.gz
+  Sample09:
+    - Sample9_R1_001.fastq.gz
+    - Sample9_R2_001.fastq.gz
+  Sample10:
+    - Sample10_R1_001.fastq.gz
+    - Sample10_R2_001.fastq.gz
+  Sample11:
+    - Sample11_R1_001.fastq.gz
+    - Sample11_R2_001.fastq.gz
+  Sample12:
+    - Sample12_R1_001.fastq.gz
+    - Sample12_R2_001.fastq.gz
