@@ -1,4 +1,5 @@
-configfile: 'config.yaml'
+if not config:
+    raise ValueError('Please specify --configfile when launching snakemake')
 
 INPUT_DIR = config['dirs']['input']
 OUTPUT_DIR = config['dirs']['output']
@@ -9,6 +10,7 @@ ALL = []
 include: 'rules/normalize_read_names.smk'
 include: 'rules/umi_tools_extract.smk'
 include: 'rules/fastqc_seq.smk'
+include: 'rules/star_genome_generate.smk'
 include: 'rules/star_align.smk'
 include: 'rules/star_align_index.smk'
 include: 'rules/star_align_flagstat.smk'

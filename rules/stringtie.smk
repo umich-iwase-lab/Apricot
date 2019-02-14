@@ -11,7 +11,7 @@ rule stringtie:
         OUTPUT_DIR + '/benchmarks/{sample}.stringtie.benchmark.txt'
     params:
         sample = '{sample}',
-        strand_flag = config['stringtie']['strand_flag'],
+        strand_flag = config['sequencing_parameters']['strand_flag'],
     threads: 8
     shell:'''(
 echo {params.sample} {output.gtf} > {output.prep_input}

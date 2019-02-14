@@ -1,7 +1,17 @@
+_star_config = config['genome_reference']['star']
+
 rule star_align:
     input:
-        OUTPUT_DIR + '/01-umi_tools_extract/processed.{sample}.R1.fastq.gz',
-        OUTPUT_DIR + '/01-umi_tools_extract/processed.{sample}.R2.fastq.gz',
+        reads = lambda wildcards: expand(\
+                OUTPUT_DIR + '/01-umi_tools_extract/processed.{sample}.{read}.fastq.gz',
+                sample=wildcards.sample,
+                read=['R1', 'R2'],
+                ),
+        genomeParameters = join(\
+                REFERENCE_DIR,
+                _star_config['genome_dir'],
+                'genomeParameters.txt'
+                ),
     output:
         OUTPUT_DIR + '/03-star_align/{sample}.star_align.bam'
     log:
@@ -10,7 +20,7 @@ rule star_align:
         OUTPUT_DIR + '/benchmarks/{sample}.star_align.benchmark.txt'
     threads: 12
     params:
-        genomeDir = REFERENCE_DIR + '/' + config['genome_reference']['star_genome_dir'],
+        genomeDir = REFERENCE_DIR + '/' + _star_config['genome_dir'],
         sjdbGTFfile = REFERENCE_DIR + '/' + config['genome_reference']['gtf'],
         outFileNamePrefix = OUTPUT_DIR + '/03-star_align/{sample}.',
         star_bam_file = '{sample}.Aligned.sortedByCoord.out.bam',
@@ -19,7 +29,7 @@ rule star_align:
 STAR \
 --genomeDir {params.genomeDir} \
 --runThreadN {threads} \
---readFilesIn {input} \
+--readFilesIn {input.reads} \
 --readFilesCommand 'gunzip -c' \
 --outFileNamePrefix {params.outFileNamePrefix} \
 --sjdbGTFfile {params.sjdbGTFfile} \

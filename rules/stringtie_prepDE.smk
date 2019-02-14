@@ -16,7 +16,7 @@ rule stringtie_prepDE:
     benchmark:
         OUTPUT_DIR + '/benchmarks/stringtie_prepDE.benchmark.txt'
     params:
-        length = config['stringtie']['read_length'],
+        length = config['sequencing_parameters']['read_length'],
         prep_input = ' '.join(expand(OUTPUT_DIR + '/08-stringtie/{sample}_prepDE_input.txt',
                                      sample=config['samples'])),
         prep_config = OUTPUT_DIR + '/09-stringtie_prepDE/prepDE_config.txt',
