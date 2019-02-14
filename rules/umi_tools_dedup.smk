@@ -7,7 +7,7 @@ rule umi_tools_dedup:
     log:
         OUTPUT_DIR + '/05-umi_tools_dedup/.log/{sample}.umi_tools_dedup.log'
     benchmark:
-        OUTPUT_DIR + '/benchmarks/{sample}.umi_tools_dedup.benchmark.txt'
+        OUTPUT_DIR + '/benchmarks/umi_tools_dedup.{sample}.benchmark.txt'
     shell: '''(
 umi_tools dedup \
     -I {input.bam} \

@@ -9,5 +9,5 @@ rule star_align_flagstat:
     log:
         OUTPUT_DIR + '/04-star_align_flagstat/.log/{sample}.star_align_flagstat.log'
     benchmark:
-        OUTPUT_DIR + '/benchmarks/{sample}.star_align_flagstat.benchmark.txt'
+        OUTPUT_DIR + '/benchmarks/star_align_flagstat.{sample}.benchmark.txt'
     shell: '(samtools flagstat {input} > {output}) 2>&1 | tee {log}'

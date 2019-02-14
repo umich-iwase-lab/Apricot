@@ -8,7 +8,7 @@ rule stringtie:
     log:
         OUTPUT_DIR + '/08-stringtie/.log/{sample}.stringtie.log'
     benchmark:
-        OUTPUT_DIR + '/benchmarks/{sample}.stringtie.benchmark.txt'
+        OUTPUT_DIR + '/benchmarks/stringtie.{sample}.benchmark.txt'
     params:
         sample = '{sample}',
         strand_flag = config['sequencing_parameters']['strand_flag'],

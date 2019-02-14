@@ -6,7 +6,7 @@ rule umi_tools_extract:
         read1 = OUTPUT_DIR + '/01-umi_tools_extract/processed.{sample}.R1.fastq.gz',
         read2 = OUTPUT_DIR + '/01-umi_tools_extract/processed.{sample}.R2.fastq.gz',
     log: OUTPUT_DIR + '/01-umi_tools_extract/.log/{sample}.umi_tools_extract.log'
-    benchmark: OUTPUT_DIR + '/benchmarks/{sample}.umi_tools_extract.benchmark.txt'
+    benchmark: OUTPUT_DIR + '/benchmarks/umi_tools_extract.{sample}.benchmark.txt'
     shell:'''(
 umi_tools extract \
 --stdin={input.read1} \

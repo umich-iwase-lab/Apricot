@@ -6,5 +6,5 @@ rule star_align_index:
     log:
         OUTPUT_DIR + '/03-star_align/.log/{sample}.star_align_index.log',
     benchmark:
-        OUTPUT_DIR + '/benchmarks/{sample}.star_align_index.benchmark.txt'
+        OUTPUT_DIR + '/benchmarks/star_align_index.{sample}.benchmark.txt'
     shell: '(samtools index {input}) 2>&1 | tee {log}'

@@ -9,7 +9,7 @@ rule fastqc_align:
     log:
         OUTPUT_DIR + '/07-fastqc_align/.log/{sample}.fastqc_align.log'
     benchmark:
-        OUTPUT_DIR + '/benchmarks/{sample}.fastqc_align.benchmark.txt'
+        OUTPUT_DIR + '/benchmarks/fastqc_align.{sample}.benchmark.txt'
     params:
         symlink = OUTPUT_DIR + '/07-fastqc_align/{sample}.bam',
         fastqc_dir= OUTPUT_DIR+ '/07-fastqc_align/',

@@ -9,5 +9,5 @@ rule umi_tools_dedup_flagstat:
     log:
         OUTPUT_DIR + '/06-umi_tools_dedup_flagstat/.log/{sample}.umi_tools_dedup_flagstat.log'
     benchmark:
-        OUTPUT_DIR + '/benchmarks/{sample}.umi_tools_dedup_flagstat.benchmark.txt'
+        OUTPUT_DIR + '/benchmarks/umi_tools_dedup_flagstat.{sample}.benchmark.txt'
     shell: '(samtools flagstat {input} > {output}) 2>&1 | tee {log}'

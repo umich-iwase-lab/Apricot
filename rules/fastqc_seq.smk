@@ -10,7 +10,7 @@ rule fastqc_seq:
     log:
         OUTPUT_DIR + '/02-fastqc_seq/.log/processed.{sample}.{read}_fastqc.log',
     benchmark:
-        OUTPUT_DIR + '/benchmarks/{sample}.{read}.fastqc_seq.benchmark.txt'
+        OUTPUT_DIR + '/benchmarks/fastqc_seq.{sample}.{read}.benchmark.txt'
     params:
         fastqc_dir= OUTPUT_DIR+ '/02-fastqc_seq/'
     shell: '(fastqc {input} -o {params.fastqc_dir}) 2>&1 | tee {log}'
