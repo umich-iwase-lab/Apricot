@@ -19,6 +19,7 @@ include: 'rules/umi_tools_dedup_flagstat.smk'
 include: 'rules/fastqc_align.smk'
 include: 'rules/stringtie.smk'
 include: 'rules/stringtie_prepDE.smk'
+include: 'rules/ballgown_build_fpkm_matrices.smk'
 
 rule all:
     input:

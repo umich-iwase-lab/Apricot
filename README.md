@@ -14,6 +14,7 @@ Quickstart
 - Add a new genome reference
   - Download
   - Add ERCC spike-ins
+    - https://www.thermofisher.com/order/catalog/product/4456739
 
 - Setup project
   - inputs
