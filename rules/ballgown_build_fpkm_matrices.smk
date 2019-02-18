@@ -1,3 +1,6 @@
+ALL.append(expand(OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html',
+                  sample=config['samples'],
+                  read=['R1', 'R2']))
 rule ballgown_build_fpkm_matrices:
     input:
         #ballgon dirs
