@@ -2,7 +2,7 @@
 dirs:
   input: test/inputs
   output: ../outputs.test
-  reference: ../reference/mm10_ercc
+  reference: /ccmb/BioinfCore/ActiveProjects/cgates/Iwase/reference/mm10_ercc 
 
 # These files/dirs assumed to be inside reference dir specified above
 genome_reference:

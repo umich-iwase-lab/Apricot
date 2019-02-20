@@ -1,5 +1,5 @@
-ALL.append([OUTPUT_DIR + '/10-ballgown/fpkm-gene.txt',
-            OUTPUT_DIR + '/10-ballgown/fpkm-transcript.txt',
+ALL.append([OUTPUT_DIR + '/10-ballgown/iso_fpkms.txt',
+            OUTPUT_DIR + '/10-ballgown/gene_fpkms.txt',
             ])
 
 rule ballgown_build_fpkm_matrices:
@@ -12,12 +12,6 @@ rule ballgown_build_fpkm_matrices:
     benchmark:
         OUTPUT_DIR + '/benchmarks/ballgown_build_fpkm_matrices.benchmark.txt'
     params:
-        output_dir = 'foo'
-    shell:
-        '''
-        touch {output.fpkm_gene}
-        touch {output.fpkm_transcript}
-#        Rscript scripts/ballgown_build_fpkm_matrices.R \
-#            --input_dir {input.ballgown_dir} \
-#            --output_dir {params.output_dir}
-        '''
+        output_dir = OUTPUT_DIR + '/10-ballgown',
+        input_dir= OUTPUT_DIR + '/08-stringtie/ballgown',
+    script: 'scripts/ballgown_build_fpkm_matrices.R'
