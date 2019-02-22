@@ -1,15 +1,4 @@
-library(optparse)
-
-#option_list = list(
-#    make_option('--input_dir', type='character', help='[Required] Path to ballgown directory'),
-#    make_option('--output_dir', type='character', help='[Required] Path to output directory')
-#)
-#opt = parse_args(OptionParser(option_list=option_list))
-
-#input_dir = opt$input_dir
-#output_dir = opt$output_dir
-#print(snakemake@params[["output_dir"]])
-#print(snakemake@params[["input_dir"]])
+#TODO Add doc
 input_dir = snakemake@params[["input_dir"]]
 output_dir = snakemake@params[["output_dir"]]
 
@@ -23,8 +12,8 @@ library(yaml)
 library(stringr)
 library(ballgown)
 
-gene_fpkm_file = sprintf('%s/gene_fpkms.txt', output_dir)
-iso_fpkm_file = sprintf('%s/iso_fpkms.txt', output_dir)
+gene_fpkm_file = sprintf('%s/fpkm-gene.txt', output_dir)
+iso_fpkm_file = sprintf('%s/fpkm-transcript.txt', output_dir)
 
 #######################################
 message('Reading ballgown input')
