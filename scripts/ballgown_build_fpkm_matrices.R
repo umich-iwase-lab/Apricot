@@ -9,11 +9,9 @@ library(optparse)
 #input_dir = opt$input_dir
 #output_dir = opt$output_dir
 
+#TODO Add doc
 input_dir = snakemake@params[["input_dir"]]
 output_dir = snakemake@params[["output_dir"]]
-
-#input_dir = "/ccmb/BioinfCore/ActiveProjects/zhouhj/Iwase/project_vallianatos.mm10_ercc/outputs/08-stringtie/ballgown"
-#output_dir = "/ccmb/BioinfCore/ActiveProjects/zhouhj/Iwase/project_vallianatos.mm10_ercc/outputs/10-ballgown"
 
 sample_paths = list.files(input_dir, full.names = TRUE)
 
@@ -25,8 +23,8 @@ library(yaml)
 library(stringr)
 library(ballgown)
 
-gene_fpkm_file = sprintf('%s/gene_fpkms.txt', output_dir)
-iso_fpkm_file = sprintf('%s/iso_fpkms.txt', output_dir)
+gene_fpkm_file = sprintf('%s/fpkm-gene.txt', output_dir)
+iso_fpkm_file = sprintf('%s/fpkm-transcript.txt', output_dir)
 
 #######################################
 message('Reading ballgown input')
