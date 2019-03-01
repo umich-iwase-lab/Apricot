@@ -21,6 +21,7 @@ include: 'rules/stringtie.smk'
 include: 'rules/stringtie_prepDE.smk'
 include: 'rules/ballgown_build_fpkm_matrices.smk'
 include: 'rules/multiqc.smk'
+include: 'rules/deeptools.smk'
 
 rule all:
     input:
