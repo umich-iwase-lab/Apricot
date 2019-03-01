@@ -23,8 +23,8 @@ library(yaml)
 library(stringr)
 library(ballgown)
 
-gene_fpkm_file = sprintf('%s/fpkm-gene.txt', output_dir)
-iso_fpkm_file = sprintf('%s/fpkm-transcript.txt', output_dir)
+gene_fpkm_file = sprintf('%s/gene_fpkms.txt', output_dir)
+iso_fpkm_file = sprintf('%s/iso_fpkms.txt', output_dir)
 
 #######################################
 message('Reading ballgown input')
