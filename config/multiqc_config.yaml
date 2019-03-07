@@ -1,0 +1,23 @@
+subtitle: ''
+intro_text: ''
+
+no_version_check: True
+
+module_order:
+  - fastqc:
+      name: 'FastQC sequences'
+      path_filters:
+        - '*fastqc_seq*'
+  - STAR
+  - fastqc:
+      name: 'FastQC alignments'
+      path_filters:
+        - '*fastqc_align*'
+  - samtools:
+      name: 'Samtools flagstat of star results'
+      path_filters:
+        - '*star_align_flagstat*'
+  - samtools:
+      name: 'Samtools flagstat of umi-dedup results'
+      path_filters:
+        - '*umi_tools_dedup_flagstat*'

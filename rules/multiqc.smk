@@ -10,5 +10,6 @@ rule multiqc:
     output: OUTPUT_DIR + '/90-multiqc/multiqc_report.html'
     benchmark: OUTPUT_DIR + '/benchmarks/multiqc.benchmark.txt'
     params:
-        multiqc_dir= OUTPUT_DIR + '/90-multiqc/'
-    shell: 'multiqc {OUTPUT_DIR} -o {params.multiqc_dir}'
+        multiqc_dir= OUTPUT_DIR + '/90-multiqc/',
+        config_file = srcdir('../config/multiqc_config.yaml'), 
+    shell: 'multiqc {OUTPUT_DIR} -o {params.multiqc_dir} --config {params.config_file}'
