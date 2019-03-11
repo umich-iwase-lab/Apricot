@@ -1,3 +1,4 @@
+from snakemake.logging import logger
 if not config:
     raise ValueError('Please specify --configfile when launching snakemake')
 
@@ -26,3 +27,27 @@ include: 'rules/deeptools.smk'
 rule all:
     input:
         *ALL
+
+def email(subject_prefix):
+    msg = 'config file:\n{}\nlog file:\n{}'.format(workflow.overwrite_configfile, logger.get_logfile())
+    email_config = config.get('email')
+    if not email_config:
+        print(subject_prefix, msg)
+    else:
+        command = "echo '{msg}' | mutt -s '{subject_prefix}{subject}' {to}".format(
+                to=email_config['to'],
+                subject_prefix=subject_prefix,
+                subject=email_config['subject'],
+                msg=msg,
+                )
+        shell(command)
+
+
+onstart:
+    email('Apricot started: ')
+
+onsuccess:
+    email('Apricot completed ok: ')
+
+onerror:
+    email('Apricot ERROR: ')

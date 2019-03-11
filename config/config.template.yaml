@@ -1,3 +1,8 @@
+#optional email config to send on run start/complete/error
+#email:
+#  subject: legacy_mm9
+#  to: cgates@umich.edu
+
 # Either absolute dirs or relative to where you launch snakemake
 dirs:
   input: test/inputs
@@ -30,3 +35,7 @@ samples:
     - SampleB.R1.fastq.gz
     - SampleB.R2.fastq.gz
 # - SampleC
+email:
+  subject: legacy_mm9
+  to: cgates@umich.edu
+
