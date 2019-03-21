@@ -11,7 +11,7 @@ ALL = []
 include: 'rules/normalize_read_names.smk'
 include: 'rules/umi_tools_extract.smk'
 include: 'rules/fastqc_seq.smk'
-include: 'rules/star_genome_generate.smk'
+include: 'rules/rsem_star_genome_generate.smk'
 include: 'rules/star_align.smk'
 include: 'rules/star_align_index.smk'
 include: 'rules/star_align_flagstat.smk'
