@@ -5,8 +5,8 @@ import pandas as pd
 import re
 l=sys.argv[1:]
 df=pd.read_csv(l[0], sep='\t')
-new=pd.DataFrame(df[['gene_id','FPKM']])
-pattern=r'(.*)(\.rsem\.genes\.results)'
+new=pd.DataFrame(df[['transcript_id','gene_id','FPKM']])
+pattern=r'(.*)(\.rsem\.isoforms\.results)'
 result=re.match(pattern,l[0])
 #print(result.group(1))
 new.rename(columns={'FPKM':result.group(1)},inplace=True)
@@ -16,4 +16,4 @@ for file in l[1:]:
     df=pd.read_csv(file, sep='\t')
     result=re.match(pattern,file)
     new[result.group(1)]=df['FPKM']
-new.to_csv('gene_fpkm.txt',sep='\t',index=False)
+new.to_csv('isoform_fpkm.txt',sep='\t',index=False)

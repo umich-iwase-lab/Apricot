@@ -15,7 +15,11 @@ rule rsem_star_align:
                 'genomeParameters.txt'
                 ),
     output:
-        OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.isoforms.results'
+        OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.genes.results',
+        OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.isoforms.results',
+        OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.STAR.genome.bam'
+        # OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.STAR.genome.sorted.bam',
+        # OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.STAR.genome.sorted.bam.bai',
     log:
         OUTPUT_DIR + '/03-rsem_star_align/.log/{sample}.rsem_star_align.log'
     benchmark:

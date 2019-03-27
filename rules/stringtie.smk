@@ -1,6 +1,8 @@
 rule stringtie:
     input:
-        bam = OUTPUT_DIR + '/05-umi_tools_dedup/{sample}.umi_tools_dedup.bam',
+#        bam = OUTPUT_DIR + '/05-umi_tools_dedup/{sample}.umi_tools_dedup.bam',
+        bam = OUTPUT_DIR + '/03-star_align/{sample}.star_align.bam',
+        bai = OUTPUT_DIR + '/03-star_align/{sample}.star_align.bam.bai',
         gtf = REFERENCE_DIR + '/' + config['genome_reference']['gtf'],
     output:
         gtf = OUTPUT_DIR + '/08-stringtie/{sample}.gtf',
