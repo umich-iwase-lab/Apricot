@@ -5,9 +5,9 @@ ALL.append([OUTPUT_DIR + '/08-rsem_calculate_expression/gene_count.txt',
             ])
 rule count_fpkm_after_dedup:
     input:
-        genes = expand(OUTPUT_DIR + '/08-rsem_calculate_expression/{sample}.rsem.genes.results',
+        genes = expand(OUTPUT_DIR + '/08-rsem_calculate_expression/{sample}.genes.results',
                       sample=config['samples']),
-        isoforms = expand(OUTPUT_DIR + '/08-rsem_calculate_expression/{sample}.rsem.isoforms.results',
+        isoforms = expand(OUTPUT_DIR + '/08-rsem_calculate_expression/{sample}.isoforms.results',
                       sample=config['samples']),
     output:
         OUTPUT_DIR + '/08-rsem_calculate_expression/gene_count.txt',

@@ -20,12 +20,12 @@ include: 'rules/umi_tools_dedup_flagstat.smk'
 include: 'rules/fastqc_align.smk'
 include: 'rules/rsem_calculate_expression.smk'
 include: 'rules/count_fpkm_after_dedup.smk'
-#include: 'rules/stringtie.smk'
-#include: 'rules/stringtie_prepDE.smk'
-#include: 'rules/ballgown_build_fpkm_matrices.smk'
+# #include: 'rules/stringtie.smk'
+# #include: 'rules/stringtie_prepDE.smk'
+# #include: 'rules/ballgown_build_fpkm_matrices.smk'
 include: 'rules/count_fpkm.smk'
-#include: 'rules/multiqc.smk'
-#include: 'rules/deeptools.smk'
+# #include: 'rules/multiqc.smk'
+# #include: 'rules/deeptools.smk'
 
 rule all:
     input:

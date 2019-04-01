@@ -6,7 +6,7 @@ import re
 l=sys.argv[1:]
 df=pd.read_csv(l[0], sep='\t')
 new=pd.DataFrame(df[['transcript_id','gene_id','FPKM']])
-pattern=r'(.*)(\.rsem\.isoforms\.results)'
+pattern=r'(.*)(\.isoforms\.results)'
 result=re.match(pattern,l[0])
 #print(result.group(1))
 new.rename(columns={'FPKM':result.group(1)},inplace=True)

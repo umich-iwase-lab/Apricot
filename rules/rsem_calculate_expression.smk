@@ -10,7 +10,7 @@ rule rsem_calculate_expression:
         OUTPUT_DIR + '/benchmarks/{sample}.rsem_calculate_expression.txt'
     params:
         genomeDir = REFERENCE_DIR + '/' + _star_config['genome_dir'],
-        outFileNamePrefix = OUTPUT_DIR + '/08-rsem_calculate_expression/{sample}.',
+        outFileNamePrefix = OUTPUT_DIR + '/08-rsem_calculate_expression/{sample}',
     shell:'''(
 rsem-calculate-expression --alignments \
 --paired-end \
