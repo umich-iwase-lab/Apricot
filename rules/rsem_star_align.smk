@@ -1,6 +1,6 @@
 _star_config = config['genome_reference']['star']
 
-ALL.append(expand(OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.transcript.sorted.bam.bai',
+ALL.append(expand(OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.sorted.bam.bai',
                sample=config['samples']))
 rule rsem_star_align:
     input:
@@ -15,12 +15,12 @@ rule rsem_star_align:
                 'genomeParameters.txt'
                 ),
     output:
-        OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.genes.results',
-        OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.isoforms.results',
-        OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.STAR.genome.bam',
-        OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.transcript.bam',
-        OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.transcript.sorted.bam',
-        OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.transcript.sorted.bam.bai',
+        OUTPUT_DIR + '/03-rsem_star_align/{sample}.genes.results',
+        OUTPUT_DIR + '/03-rsem_star_align/{sample}.isoforms.results',
+        OUTPUT_DIR + '/03-rsem_star_align/{sample}.STAR.genome.bam',
+        OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.bam',
+        OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.sorted.bam',
+        OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.sorted.bam.bai',
     log:
         OUTPUT_DIR + '/03-rsem_star_align/.log/{sample}.rsem_star_align.log'
     benchmark:
@@ -31,7 +31,7 @@ rule rsem_star_align:
     params:
         genomeDir = REFERENCE_DIR + '/' + _star_config['genome_dir'],
 #        sjdbGTFfile = REFERENCE_DIR + '/' + config['genome_reference']['gtf'],
-        outFileNamePrefix = OUTPUT_DIR + '/03-rsem_star_align/{sample}.',
+        outFileNamePrefix = OUTPUT_DIR + '/03-rsem_star_align/{sample}',
         star_bam_file = '{sample}.Aligned.sortedByCoord.out.bam',
         #output_bam_file = '{sample}.star_align.bam'
     shell: '''(
@@ -44,7 +44,7 @@ rsem-calculate-expression --paired-end \
 -p {threads} \
 {input.reads} \
 {params.genomeDir}/RSEM_ref \
-{params.outFileNamePrefix}rsem
+{params.outFileNamePrefix}
     )2>&1 | tee {log}
     '''
 #     shell: '''(
