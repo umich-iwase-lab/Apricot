@@ -42,20 +42,24 @@ def _parse_command_line_args(sys_argv):
         type=str,
         help='full name of column to extract from inputs (e.g. FPKM)',
         required=True)
-    # parser.add_argument(
-    #     '--id_columns',
-    #     type=str,
-    #     help='full name of column to extract from inputs (e.g. FPKM)',
-    #     required=True)
+    parser.add_argument(
+        '--id_columns',
+        type=str,
+        help='gene_id or gene_id,transcript_id',
+        required=True)
+
     parser.add_argument('--version',
                     '-V',
                     action='version',
                     version=__version__)
     args = parser.parse_args(sys_argv)
+    args.id_columns=args.id_columns.split(',')
     return args
 
 
 def main(argv):
+    print('combine v{}'.format(__version__))
+    print('command line args: {}'.format(' '.join(argv)))
     args = _parse_command_line_args(argv[1:])
 
     sample_files = _build_sample_files(args.input_path)
@@ -65,7 +69,8 @@ def main(argv):
     name, file = sample_files.pop(0)
     name = name + '|' + merge_column
     df=pd.read_csv(file, sep='\t',low_memory=False)
-    new=pd.DataFrame(df[['transcript_id','gene_id',merge_column]])
+
+    new=pd.DataFrame(df[args.id_columns+[merge_column]])
     new.rename(columns={merge_column:name},inplace=True)
 
     for (name, file) in sample_files:

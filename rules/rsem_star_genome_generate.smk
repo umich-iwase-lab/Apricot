@@ -23,9 +23,10 @@ rule rsem_star_genome_generate:
         genomeDir = REFERENCE_DIR + '/' + _star_config['genome_dir'],
         sjdbOverhang = _star_config.get('sjdbOverhang', _defaultSjdbOverhang),
     shell:'''
-(rsem-prepare-reference --gtf {input.gtf} \
+(star_path=`which STAR`
+rsem-prepare-reference --gtf {input.gtf} \
                     --star \
-                    --star-path ~/miniconda3/envs/apricot/bin \
+                    --star-path $star_path \
                     --star-sjdboverhang {params.sjdbOverhang} \
                     -p {threads} \
                     {input.fasta} \
