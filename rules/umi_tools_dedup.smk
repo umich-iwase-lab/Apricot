@@ -5,9 +5,9 @@ rule umi_tools_dedup:
         #bam = OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.STAR.genome.sorted.bam',
         #bai = OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.STAR.genome.sorted.bam.bai',
     output:
-        OUTPUT_DIR + '/05-umi_tools_dedup/{sample}.umi_tools_dedup.bam'
+        OUTPUT_DIR + '/06-umi_tools_dedup/{sample}.umi_tools_dedup.bam'
     log:
-        OUTPUT_DIR + '/05-umi_tools_dedup/.log/{sample}.umi_tools_dedup.log'
+        OUTPUT_DIR + '/06-umi_tools_dedup/.log/{sample}.umi_tools_dedup.log'
     benchmark:
         OUTPUT_DIR + '/benchmarks/umi_tools_dedup.{sample}.benchmark.txt'
     shell: '''(

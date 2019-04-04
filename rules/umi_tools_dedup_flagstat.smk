@@ -3,7 +3,7 @@ ALL.append(expand(OUTPUT_DIR + '/06-umi_tools_dedup_flagstat/{sample}.umi_tools_
 
 rule umi_tools_dedup_flagstat:
     input:
-        OUTPUT_DIR + '/05-umi_tools_dedup/{sample}.umi_tools_dedup.bam'
+        OUTPUT_DIR + '/06-umi_tools_dedup/{sample}.umi_tools_dedup.bam'
     output:
         OUTPUT_DIR + '/06-umi_tools_dedup_flagstat/{sample}.umi_tools_dedup_flagstat.flagstat',
     log:
