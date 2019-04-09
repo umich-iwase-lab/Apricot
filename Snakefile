@@ -27,8 +27,9 @@ include: 'rules/convert_dedup_for_rsem.smk'
 # #include: 'rules/stringtie_prepDE.smk'
 # #include: 'rules/ballgown_build_fpkm_matrices.smk'
 #include: 'rules/count_fpkm.smk'
-# #include: 'rules/multiqc.smk'
-# #include: 'rules/deeptools.smk'
+include: 'rules/multiqc.smk'
+include: 'rules/sort_index_after_dedup.smk'
+include: 'rules/deeptools.smk'
 
 rule all:
     input:
