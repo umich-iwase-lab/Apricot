@@ -1,7 +1,7 @@
 _star_config = config['genome_reference']['star']
 
-ALL.append(expand(OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.sorted.bam.bai',
-               sample=config['samples']))
+#ALL.append(expand(OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.sorted.bam.bai',
+#               sample=config['samples']))
 rule rsem_star_align:
     input:
         reads = lambda wildcards: expand(\
@@ -19,8 +19,8 @@ rule rsem_star_align:
         OUTPUT_DIR + '/03-rsem_star_align/{sample}.isoforms.results',
         OUTPUT_DIR + '/03-rsem_star_align/{sample}.STAR.genome.bam',
         OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.bam',
-        OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.sorted.bam',
-        OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.sorted.bam.bai',
+        #OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.sorted.bam',
+        #OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.sorted.bam.bai',
     log:
         OUTPUT_DIR + '/03-rsem_star_align/.log/{sample}.rsem_star_align.log'
     benchmark:
@@ -40,13 +40,13 @@ rsem-calculate-expression --paired-end \
 --star-path ~/miniconda3/envs/apricot/bin \
 --star-gzipped-read-file \
 --star-output-genome-bam \
---sort-bam-by-coordinate \
 -p {threads} \
 {input.reads} \
 {params.genomeDir}/RSEM_ref \
 {params.outFileNamePrefix}
     )2>&1 | tee {log}
     '''
+#--sort-bam-by-coordinate \
 #     shell: '''(
 # STAR \
 #     --twopassMode Basic \

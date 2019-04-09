@@ -3,7 +3,7 @@ ALL.append(expand(OUTPUT_DIR + '/07-fastqc_align/{sample}_fastqc.html',
 
 rule fastqc_align:
     input:
-        OUTPUT_DIR + '/06-umi_tools_dedup/{sample}.umi_tools_dedup.bam',
+        OUTPUT_DIR + '/06-umi_tools_dedup/{sample}.genome.umi_tools_dedup.bam',
     output:
         OUTPUT_DIR + '/07-fastqc_align/{sample}_fastqc.html',
     log:
