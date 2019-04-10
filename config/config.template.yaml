@@ -7,7 +7,7 @@
 dirs:
   input: test/inputs
   output: ../outputs.test
-  reference: /ccmb/BioinfCore/ActiveProjects/cgates/Iwase/reference/mm10_ercc 
+  reference: /ccmb/BioinfCore/ActiveProjects/cgates/Iwase/reference/mm10_ercc # the reference folder that contains genome fasta file and gtf file
 
 # These files/dirs assumed to be inside reference dir specified above
 genome_reference:
@@ -15,7 +15,7 @@ genome_reference:
   gtf: mm10_ercc.gencode.vM17.annotation.exon.gtf
   star:
     # star genome will be built if it doesn't exist
-    genome_dir: star_genome
+    genome_dir: rsem_star_genome
     # sjdbOverhang is optional; will default to read_length - 1
     #sjdbOverhang: 149
 
@@ -26,6 +26,7 @@ sequencing_parameters:
   # '--fr'    Assumes a stranded library fr-secondstrand
   # ''        Leave blank if unstranded
   strand_flag: '--rf'
+  paired_end: '--paired-end' # if single-end, then get rid of this line
 
 samples:
   SampleA:
@@ -38,4 +39,3 @@ samples:
 email:
   subject: legacy_mm9
   to: cgates@umich.edu
-

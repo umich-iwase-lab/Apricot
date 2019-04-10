@@ -5,6 +5,7 @@ sequencing_parameters:
   # '--fr'    Assumes a stranded library fr-secondstrand
   # ''        Leave blank if unstranded
   strand_flag: '--rf'
+  paired_end: '--paired-end' # if single-end, then get rid of this line
 
 dirs:
   input: inputs
@@ -15,7 +16,7 @@ genome_reference:
   fasta: mm10_ercc.fa
   gtf: mm10_ercc.gencode.vM17.annotation.exon.gtf
   star:
-    genome_dir: star_genome
+    genome_dir: rsem_star_genome
 
 samples:
   Sample01-5cKO1:

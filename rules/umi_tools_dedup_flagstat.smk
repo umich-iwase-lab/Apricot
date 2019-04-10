@@ -1,5 +1,5 @@
-ALL.append(expand(OUTPUT_DIR + '/06-umi_tools_dedup_flagstat/{sample}.genome.umi_tools_dedup_flagstat.flagstat',
-                  sample=config['samples']))
+#ALL.append(expand(OUTPUT_DIR + '/06-umi_tools_dedup_flagstat/{sample}.genome.umi_tools_dedup_flagstat.flagstat',
+#                  sample=config['samples']))
 
 rule umi_tools_dedup_flagstat:
     input:

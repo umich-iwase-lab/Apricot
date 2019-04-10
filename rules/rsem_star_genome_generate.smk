@@ -23,7 +23,8 @@ rule rsem_star_genome_generate:
         genomeDir = REFERENCE_DIR + '/' + _star_config['genome_dir'],
         sjdbOverhang = _star_config.get('sjdbOverhang', _defaultSjdbOverhang),
     shell:'''
-(star_path=`which STAR`
+(star=`which STAR`
+star_path=${{star%/*}} # extract the path only
 rsem-prepare-reference --gtf {input.gtf} \
                     --star \
                     --star-path $star_path \

@@ -1,5 +1,5 @@
-ALL.append(expand(OUTPUT_DIR + '/07-fastqc_align/{sample}_fastqc.html',
-                  sample=config['samples']))
+#ALL.append(expand(OUTPUT_DIR + '/07-fastqc_align/{sample}_fastqc.html',
+#                  sample=config['samples']))
 
 rule fastqc_align:
     input:

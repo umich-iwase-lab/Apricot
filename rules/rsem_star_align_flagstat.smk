@@ -1,5 +1,5 @@
-ALL.append(expand(OUTPUT_DIR + '/04-rsem_star_align_flagstat/{sample}.rsem_star_align_flagstat.flagstat',
-                  sample=config['samples']))
+#ALL.append(expand(OUTPUT_DIR + '/04-rsem_star_align_flagstat/{sample}.rsem_star_align_flagstat.flagstat',
+#                  sample=config['samples']))
 
 rule rsem_star_align_flagstat:
     input:
