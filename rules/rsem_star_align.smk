@@ -32,7 +32,7 @@ rule rsem_star_align:
         genomeDir = REFERENCE_DIR + '/' + _star_config['genome_dir'],
 #        sjdbGTFfile = REFERENCE_DIR + '/' + config['genome_reference']['gtf'],
         outFileNamePrefix = OUTPUT_DIR + '/03-rsem_star_align/{sample}',
-        paired_end = config['sequencing_parameters']['paired_end'],
+        paired_end = '--paired-end' if config['sequencing_parameters']['paired'] else '',
         #star_bam_file = '{sample}.Aligned.sortedByCoord.out.bam',
         #output_bam_file = '{sample}.star_align.bam'
     shell: '''(

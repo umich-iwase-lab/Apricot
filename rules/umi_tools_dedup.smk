@@ -12,9 +12,11 @@ rule umi_tools_dedup:
         OUTPUT_DIR + '/06-umi_tools_dedup/.log/{sample}.{type}.umi_tools_dedup.log'
     benchmark:
         OUTPUT_DIR + '/benchmarks/umi_tools_dedup.{type}.{sample}.benchmark.txt'
+    params:
+        paired_end = '--paired' if config['sequencing_parameters']['paired'] else '',
     shell: '''(
 umi_tools dedup \
     -I {input.bam} \
-    --paired \
+    {params.paired_end} \
     -S {output}\
 ) 2>&1 | tee {log}'''
