@@ -1,7 +1,5 @@
 _star_config = config['genome_reference']['star']
 
-#ALL.append(expand(OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.sorted.bam.bai',
-#               sample=config['samples']))
 rule rsem_star_align:
     input:
         reads = lambda wildcards: expand(\
@@ -17,7 +15,6 @@ rule rsem_star_align:
     output:
         OUTPUT_DIR + '/03-rsem_star_align/{sample}.genes.results',
         OUTPUT_DIR + '/03-rsem_star_align/{sample}.isoforms.results',
-        #OUTPUT_DIR + '/03-rsem_star_align/{sample}.STAR.genome.bam',
         OUTPUT_DIR + '/03-rsem_star_align/{sample}.genome.bam',
         OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.bam',
     log:
@@ -44,5 +41,4 @@ rsem-calculate-expression \
     {params.genomeDir}/RSEM_ref \
     {params.outFileNamePrefix}
 mv {params.outFileNamePrefix}.STAR.genome.bam {params.outFileNamePrefix}.genome.bam
-    )2>&1 | tee {log}
-    '''
+)2>&1 | tee {log}'''

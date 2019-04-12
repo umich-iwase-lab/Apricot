@@ -1,7 +1,3 @@
-#ALL.append(expand(OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html',
-#                  sample=config['samples'],
-#                  read=['R1', 'R2']))
-
 rule fastqc_seq:
     input:
         OUTPUT_DIR + '/01-umi_tools_extract/processed.{sample}.{read}.fastq.gz',

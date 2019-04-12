@@ -1,6 +1,3 @@
-#ALL.append(expand(OUTPUT_DIR + '/10-fastqc_align/{sample}_fastqc.html',
-#                  sample=config['samples']))
-
 rule fastqc_align:
     input:
         OUTPUT_DIR + '/07-umi_tools_dedup/{sample}.genome.umi_tools_dedup.bam',

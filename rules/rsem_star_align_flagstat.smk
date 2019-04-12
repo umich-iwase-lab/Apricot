@@ -1,6 +1,3 @@
-#ALL.append(expand(OUTPUT_DIR + '/05-rsem_star_align_flagstat/{sample}.rsem_star_align_flagstat.flagstat',
-#                  sample=config['samples']))
-
 rule rsem_star_align_flagstat:
     input:
         OUTPUT_DIR + '/03-rsem_star_align/{sample}.genome.bam'

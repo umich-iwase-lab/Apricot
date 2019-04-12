@@ -1,9 +1,5 @@
-# ALL.append(OUTPUT_DIR + '/11-rsem_calculate_expression_using_dedup/{sample}.genes.results')
-# ALL.append(OUTPUT_DIR + '/11-rsem_calculate_expression_using_dedup/{sample}.isoforms.results')
-#ALL.append(expand(OUTPUT_DIR + '/11-rsem_calculate_expression_using_dedup/{sample}.{feature}.results',
-#                  sample=config['samples'], feature=['genes','isoforms']))
 rule rsem_calculate_expression_using_dedup:
-    input: #fix to include genome
+    input:
         OUTPUT_DIR + '/09-convert_dedup_for_rsem/{sample}.transcript.convert_dedup_for_rsem.bam',
     output:
         OUTPUT_DIR + '/11-rsem_calculate_expression_using_dedup/{sample}.genes.results',
@@ -18,9 +14,9 @@ rule rsem_calculate_expression_using_dedup:
         paired_end = '--paired-end' if config['sequencing_parameters']['paired'] else '',
     shell:'''(
 rsem-calculate-expression --alignments \
-{params.paired_end} \
---no-bam-output \
-{input} \
-{params.genomeDir}/RSEM_ref \
-{params.outFileNamePrefix}
-    )2>&1 | tee {log}'''
+    {params.paired_end} \
+    --no-bam-output \
+    {input} \
+    {params.genomeDir}/RSEM_ref \
+    {params.outFileNamePrefix}
+)2>&1 | tee {log}'''

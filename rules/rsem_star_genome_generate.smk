@@ -2,8 +2,6 @@ from os.path import join
 _defaultSjdbOverhang = config['sequencing_parameters']['read_length'] - 1
 _star_config = config['genome_reference']['star']
 
-#ALL.append(expand(OUTPUT_DIR + '/04-star_align_flagstat/{sample}.star_align_flagstat.flagstat',
-#                  sample=config['samples']))
 rule rsem_star_genome_generate:
     input:
         fasta = REFERENCE_DIR + '/' + config['genome_reference']['fasta'],
@@ -22,7 +20,7 @@ rule rsem_star_genome_generate:
     params:
         genomeDir = REFERENCE_DIR + '/' + _star_config['genome_dir'],
         sjdbOverhang = _star_config.get('sjdbOverhang', _defaultSjdbOverhang),
-    shell:'''
+    shell: '''
 (
 STAR_PATH=$(dirname $(which STAR))
 rsem-prepare-reference \
@@ -33,5 +31,4 @@ rsem-prepare-reference \
     -p {threads} \
     {input.fasta} \
     {params.genomeDir}/RSEM_ref
-) 2>&1 | tee {log}
-    '''
+) 2>&1 | tee {log}'''

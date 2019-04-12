@@ -1,4 +1,4 @@
-# For combining the "FPKM" from individual result output into one file
+'''Combines the count/FPKM/TPM from individual sample outputs into one matrix'''
 import argparse
 from glob import glob
 from os.path import commonprefix, commonpath

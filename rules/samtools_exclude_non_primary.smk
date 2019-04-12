@@ -1,8 +1,3 @@
-# TODO: temporarily stubbed this in to force rule to run, remove when downstream inputs adjusted
-# ALL.append(expand(OUTPUT_DIR + '/04-samtools_exclude_non_primary/{sample}.{type}.samtools_exclude_non_primary.bam.bai',
-#                   sample=config['samples'],
-#                   type=['genome', 'transcript']))
-
 rule samtools_exclude_non_primary:
     '''
     TODO: Simplify to remove duplication between genome and transcript.
