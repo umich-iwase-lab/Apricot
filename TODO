@@ -1,4 +1,6 @@
 Renumber
-Check fastqc of legacy results
-FInish normalize_read_names
+Cleanup stray comment blocks
+FInish exclude non_primary
 reprint rulegraph
+extend multiqc to cover all flagstats
+TODOs
