@@ -23,26 +23,15 @@ rule rsem_star_genome_generate:
         genomeDir = REFERENCE_DIR + '/' + _star_config['genome_dir'],
         sjdbOverhang = _star_config.get('sjdbOverhang', _defaultSjdbOverhang),
     shell:'''
-(star=`which STAR`
-star_path=${{star%/*}} # extract the path only
-rsem-prepare-reference --gtf {input.gtf} \
-                    --star \
-                    --star-path $star_path \
-                    --star-sjdboverhang {params.sjdbOverhang} \
-                    -p {threads} \
-                    {input.fasta} \
-                    {params.genomeDir}/RSEM_ref
+(
+STAR_PATH=$(dirname $(which STAR))
+rsem-prepare-reference \
+    --gtf {input.gtf} \
+    --star \
+    --star-path $STAR_PATH \
+    --star-sjdboverhang {params.sjdbOverhang} \
+    -p {threads} \
+    {input.fasta} \
+    {params.genomeDir}/RSEM_ref
 ) 2>&1 | tee {log}
     '''
-#     shell: '''(
-# mkdir -p {params.genomeDir}.tmp
-# STAR \
-#   --runMode genomeGenerate \
-#   --runThreadN {threads} \
-#   --genomeFastaFiles {input.fasta} \
-#   --genomeDir {params.genomeDir}.tmp \
-#   --sjdbGTFfile {input.gtf} \
-#   --sjdbOverhang {params.sjdbOverhang}
-# mv {params.genomeDir}.tmp/* {params.genomeDir}
-# rmdir {params.genomeDir}.tmp
-# ) 2>&1 | tee {log}'''

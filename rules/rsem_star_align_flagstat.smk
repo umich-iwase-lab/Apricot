@@ -3,7 +3,7 @@
 
 rule rsem_star_align_flagstat:
     input:
-        OUTPUT_DIR + '/03-rsem_star_align/{sample}.STAR.genome.bam'
+        OUTPUT_DIR + '/03-rsem_star_align/{sample}.genome.bam'
     output:
         OUTPUT_DIR + '/04-rsem_star_align_flagstat/{sample}.rsem_star_align_flagstat.flagstat',
     log:

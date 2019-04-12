@@ -14,6 +14,6 @@ rule fastqc_align:
         symlink = OUTPUT_DIR + '/07-fastqc_align/{sample}.bam',
         fastqc_dir= OUTPUT_DIR+ '/07-fastqc_align/',
     shell: '''(
-ln -fsr {input} {params.symlink}
+python -c 'import os, os.path; os.symlink(os.path.relpath("{input}", os.path.dirname("{params.symlink}")), "{params.symlink}")'
 fastqc {params.symlink} -o {params.fastqc_dir}
 ) 2>&1 | tee {log}'''

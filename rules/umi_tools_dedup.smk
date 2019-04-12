@@ -1,11 +1,7 @@
 rule umi_tools_dedup:
     input:
-        # bam = OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.sorted.bam',
-        # bai = OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.sorted.bam.bai',
-        bam = OUTPUT_DIR + '/04A-exclude_non_primary/{sample}.{type}.exclude_non_primary.bam',
-        bai = OUTPUT_DIR + '/04A-exclude_non_primary/{sample}.{type}.exclude_non_primary.bam.bai',
-        #bam = OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.STAR.genome.sorted.bam',
-        #bai = OUTPUT_DIR + '/03-rsem_star_align/{sample}.rsem.STAR.genome.sorted.bam.bai',
+        bam = OUTPUT_DIR + '/04A-samtools_exclude_non_primary/{sample}.{type}.samtools_exclude_non_primary.bam',
+        bai = OUTPUT_DIR + '/04A-samtools_exclude_non_primary/{sample}.{type}.samtools_exclude_non_primary.bam.bai',
     output:
         OUTPUT_DIR + '/06-umi_tools_dedup/{sample}.{type}.umi_tools_dedup.bam',
     log:

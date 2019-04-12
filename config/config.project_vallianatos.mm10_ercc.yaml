@@ -5,7 +5,7 @@ sequencing_parameters:
   # '--fr'    Assumes a stranded library fr-secondstrand
   # ''        Leave blank if unstranded
   strand_flag: '--rf'
-  paired_end: '--paired-end' # if single-end, then get rid of this line
+  paired: True
 
 dirs:
   input: inputs
