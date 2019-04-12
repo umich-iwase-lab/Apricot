@@ -1,5 +1,1 @@
-Rule level doc
-FInish exclude non_primary
 reprint rulegraph
-extend multiqc to cover all flagstats
-TODOs

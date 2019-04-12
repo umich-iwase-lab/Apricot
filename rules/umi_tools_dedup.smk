@@ -1,7 +1,7 @@
 rule umi_tools_dedup:
     input:
-        bam = OUTPUT_DIR + '/04-samtools_exclude_non_primary/{sample}.{type}.samtools_exclude_non_primary.bam',
-        bai = OUTPUT_DIR + '/04-samtools_exclude_non_primary/{sample}.{type}.samtools_exclude_non_primary.bam.bai',
+        bam = OUTPUT_DIR + '/05-samtools_exclude_non_primary/{sample}.{type}.samtools_exclude_non_primary.bam',
+        bai = OUTPUT_DIR + '/05-samtools_exclude_non_primary/{sample}.{type}.samtools_exclude_non_primary.bam.bai',
     output:
         OUTPUT_DIR + '/07-umi_tools_dedup/{sample}.{type}.umi_tools_dedup.bam',
     log:
