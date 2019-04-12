@@ -1,7 +1,8 @@
 # Apricot
 Iwase lab RNA-seq pipeline
 
-(1 paragraph overview)
+Apricot is a bulk RNA-Seq pipeline that accepts in-line barcoded, paried fastq files and produces sample alignments, count matrices, sample bigwigs, and an array of QC reports. It uses Snakemake as an automation framework and has been tested in several Unix/Linux environments. It uses STAR (wrapped by RSEM) for alignment and as such will requires peak memory on the order of 30Gb RAM to align using mm9/mm10.
+
 
 Quickstart
 ----------
