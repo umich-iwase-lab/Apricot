@@ -31,12 +31,16 @@ Quickstart
   mkdir GRCm38_vM21; cd GRCm38_vM21
   ```
   - Download genome fasta and gtf files
+    ```
     https://www.gencodegenes.org/mouse/
     wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M21/gencode.vM21.annotation.gtf.gz
     wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M21/GRCm38.primary_assembly.genome.fa.gz
+    ```
   - Add ERCC spike-ins if desired
     - Download "ERCC Controls Annotation: ERCC RNA Spike-In Control Mixes" from Thermo Fisher
+      ```
       https://www.thermofisher.com/order/catalog/product/4456739
+      ```
     - Append sequences to fasta file
       ```
       wget https://assets.thermofisher.com/TFS-Assets/LSG/manuals/cms_095047.txt
@@ -50,7 +54,7 @@ Quickstart
       $1, length($5)-1, $1, $1, $1)}' > ercc.gtf
 
       cat GRCm38_vM21.gtf ercc.gtf | dos2unix > GRCm38_vM21_ercc.gtf
-
+      ```
 - Setup project
   ```
   mkdir -p project_A/inputs
