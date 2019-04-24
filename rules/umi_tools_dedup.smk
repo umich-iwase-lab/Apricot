@@ -9,7 +9,7 @@ rule umi_tools_dedup:
     benchmark:
         OUTPUT_DIR + '/benchmarks/umi_tools_dedup.{type}.{sample}.benchmark.txt'
     params:
-        paired_end = '--paired' if config['sequencing_parameters']['paired'] else '',
+        paired_end = '--paired' if PAIRED_END else '',
     shell: '''(
 umi_tools dedup \
     -I {input.bam} \

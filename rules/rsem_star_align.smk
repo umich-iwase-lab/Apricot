@@ -5,7 +5,7 @@ rule rsem_star_align:
         reads = lambda wildcards: expand(\
                 OUTPUT_DIR + '/01-umi_tools_extract/processed.{sample}.{read}.fastq.gz',
                 sample=wildcards.sample,
-                read=['R1', 'R2'],
+                read=READS,
                 ),
         genomeParameters = join(\
                 REFERENCE_DIR,
@@ -27,7 +27,7 @@ rule rsem_star_align:
     params:
         genomeDir = REFERENCE_DIR + '/' + _star_config['genome_dir'],
         outFileNamePrefix = OUTPUT_DIR + '/03-rsem_star_align/{sample}',
-        paired_end = '--paired-end' if config['sequencing_parameters']['paired'] else '',
+        paired_end = '--paired-end' if PAIRED_END else '',
     shell: '''(
 STAR_PATH=$(dirname $(which STAR))
 rsem-calculate-expression \

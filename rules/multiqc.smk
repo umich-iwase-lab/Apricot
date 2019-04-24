@@ -1,7 +1,7 @@
 ALL.append(OUTPUT_DIR + '/90-multiqc/multiqc_report.html')
 
 rule multiqc:
-    input: expand(OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html', sample=config['samples'], read=['R1', 'R2']),
+    input: expand(OUTPUT_DIR + '/02-fastqc_seq/processed.{sample}.{read}_fastqc.html', sample=config['samples'], read=READS),
            expand(OUTPUT_DIR + '/04-rsem_star_align_flagstat/{sample}.rsem_star_align_flagstat.flagstat',sample=config['samples']),
            expand(OUTPUT_DIR + '/08-umi_tools_dedup_flagstat/{sample}.genome.umi_tools_dedup_flagstat.flagstat',sample=config['samples']),
            expand(OUTPUT_DIR + '/10-fastqc_align/{sample}_fastqc.html',sample=config['samples']),

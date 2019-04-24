@@ -11,7 +11,7 @@ rule rsem_calculate_expression_using_dedup:
     params:
         genomeDir = REFERENCE_DIR + '/' + _star_config['genome_dir'],
         outFileNamePrefix = OUTPUT_DIR + '/11-rsem_calculate_expression_using_dedup/{sample}',
-        paired_end = '--paired-end' if config['sequencing_parameters']['paired'] else '',
+        paired_end = '--paired-end' if PAIRED_END else '',
     shell:'''(
 rsem-calculate-expression --alignments \
     {params.paired_end} \

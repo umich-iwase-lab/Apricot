@@ -4,7 +4,7 @@ rule normalize_read_names:
                                          read_name=config['samples'][wildcards.sample]),
     output:
         reads = expand(OUTPUT_DIR + '/00-normalize_read_names/{{sample}}.{read}.fastq.gz',
-                       read=['R1', 'R2']),
+                       read=READS),
     run:
         from os import symlink
         from os.path import dirname

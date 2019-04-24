@@ -26,8 +26,6 @@ sequencing_parameters:
   # '--fr'    Assumes a stranded library fr-secondstrand
   # ''        Leave blank if unstranded
   strand_flag: '--rf'
-  paired: True  # True if paired-end, False if single-end
-
 
 samples:
   SampleA:

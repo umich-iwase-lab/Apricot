@@ -2,12 +2,14 @@ ALL.append(expand(OUTPUT_DIR + '/12-combine_counts_after_dedup/{feature}_{metric
                   feature=['gene','isoform'],
                   metric=['expected_count', 'FPKM', 'TPM']))
 
+_INPUT_DIR = OUTPUT_DIR + '/11-rsem_calculate_expression_using_dedup/'
+
 rule combine_counts_after_dedup:
     input:
-        genes = expand(OUTPUT_DIR + '/11-rsem_calculate_expression_using_dedup/{sample}.genes.results',
-                      sample=config['samples']),
-        isoforms = expand(OUTPUT_DIR + '/11-rsem_calculate_expression_using_dedup/{sample}.isoforms.results',
-                      sample=config['samples']),
+        genes = expand(_INPUT_DIR + '{sample}.genes.results',
+                       sample=config['samples']),
+        isoforms = expand(_INPUT_DIR + '{sample}.isoforms.results',
+                          sample=config['samples']),
     output:
         gene = OUTPUT_DIR + '/12-combine_counts_after_dedup/gene_{metric}.txt',
         isoform = OUTPUT_DIR + '/12-combine_counts_after_dedup/isoform_{metric}.txt',
@@ -19,15 +21,15 @@ rule combine_counts_after_dedup:
         metric = '{metric}',
         gene_count_script = srcdir('../scripts/combine.py'),
     shell:'''(
-python {params.gene_count_script} --input_path 'outputs/11-rsem_calculate_expression_using_dedup/*.genes.results' \
---output_file {output.gene} \
--c {params.metric} \
---id_columns gene_id
-
-python {params.gene_count_script} --input_path 'outputs/11-rsem_calculate_expression_using_dedup/*.isoforms.results' \
---output_file {output.isoform} \
--c {params.metric} \
---id_columns transcript_id,gene_id
-
+python {params.gene_count_script} \
+    --input_path '{_INPUT_DIR}*.genes.results' \
+    --output_file {output.gene} \
+    -c {params.metric} \
+    --id_columns gene_id
+python {params.gene_count_script} \
+    --input_path '{_INPUT_DIR}*.isoforms.results' \
+    --output_file {output.isoform} \
+    -c {params.metric} \
+    --id_columns transcript_id,gene_id
 )2>&1 | tee {log}
     '''
