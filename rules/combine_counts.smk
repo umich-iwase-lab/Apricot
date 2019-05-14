@@ -2,7 +2,7 @@ ALL.append(expand(OUTPUT_DIR + '/combine_counts/{feature}_{metric}.txt',
                   feature=['gene','isoform'],
                   metric=['expected_count', 'FPKM', 'TPM']))
 
-_INPUT_DIR = OUTPUT_DIR + '/03-rsem_star_align/'
+_INPUT_DIR = OUTPUT_DIR + '/rsem_star_align/'
 
 rule combine_counts:
     input:

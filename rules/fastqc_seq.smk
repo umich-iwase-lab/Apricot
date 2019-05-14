@@ -1,6 +1,6 @@
 rule fastqc_seq:
     input:
-        OUTPUT_DIR + '/pre_processed_reads/processed.{sample}.{read}.fastq.gz',
+        OUTPUT_DIR + '/umi_tools_extract/processed.{sample}.{read}.fastq.gz',
     output:
         OUTPUT_DIR + '/fastqc_seq/processed.{sample}.{read}_fastqc.html',
     log:
