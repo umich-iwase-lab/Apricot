@@ -1,0 +1,213 @@
+from snakemake.logging import logger
+if not config:
+    raise ValueError('Please specify --configfile when launching snakemake')
+
+INPUT_DIR = config['dirs']['input']
+OUTPUT_DIR = config['dirs']['output']
+REFERENCE_DIR = config['dirs']['reference']
+
+def _get_paired_end():
+    _read_counts = list(set([len(reads) for sample, reads in config['samples'].items()]))
+    if len(_read_counts) != 1:
+        raise ValueError('Check config file: samples must be consistently single-end or paired-end')
+    _paired_end = _read_counts[0] == 2
+    reads = ['R1', 'R2'] if _paired_end else ['R1']
+    return _paired_end, reads
+
+PAIRED_END, READS = _get_paired_end()
+#print('paired = {}'.format(PAIRED_END))
+
+
+
+ALL = []
+
+ALL.append(expand(OUTPUT_DIR + '/deeptools_bigwig/{sample}.bw',
+                  sample=config['samples']))
+ALL.append(OUTPUT_DIR + '/multiqc/multiqc_report.html')
+
+
+include: 'rules/normalize_read_names.smk'
+include: 'rules/rsem_star_genome_generate.smk'
+include: 'rules/rsem_star_align_index.smk'
+include: 'rules/rsem_star_align_flagstat.smk'
+include: 'rules/combine_counts.smk'
+
+
+rule all:
+    input:
+        *ALL
+
+
+rule fastqc_seq:
+    input:
+        OUTPUT_DIR + '/normalize_read_names/{sample}.{read}.fastq.gz',
+    output:
+        OUTPUT_DIR + '/fastqc_seq/{sample}.{read}_fastqc.html',
+    log:
+        OUTPUT_DIR + '/fastqc_seq/.log/{sample}.{read}_fastqc.log',
+    benchmark:
+        OUTPUT_DIR + '/benchmarks/fastqc_seq.{sample}.{read}.benchmark.txt'
+    params:
+        fastqc_dir= OUTPUT_DIR+ '/fastqc_seq/'
+    shell: '(fastqc {input} -o {params.fastqc_dir}) 2>&1 | tee {log}'
+
+
+rule rsem_star_align:
+    input:
+        reads = lambda wildcards: expand(\
+                OUTPUT_DIR + '/normalize_read_names/{sample}.{read}.fastq.gz',
+                sample=wildcards.sample,
+                read=READS,
+                ),
+        genomeParameters = join(\
+                REFERENCE_DIR,
+                _star_config['genome_dir'],
+                'genomeParameters.txt'
+                ),
+    output:
+        OUTPUT_DIR + '/rsem_star_align/{sample}.genes.results',
+        OUTPUT_DIR + '/rsem_star_align/{sample}.isoforms.results',
+        OUTPUT_DIR + '/rsem_star_align/{sample}.genome.bam',
+        OUTPUT_DIR + '/rsem_star_align/{sample}.transcript.bam',
+    log:
+        OUTPUT_DIR + '/rsem_star_align/.log/{sample}.rsem_star_align.log'
+    benchmark:
+        OUTPUT_DIR + '/benchmarks/rsem_star_align.{sample}.benchmark.txt'
+    threads: 12
+    resources:
+        mem_gb=30
+    params:
+        genomeDir = REFERENCE_DIR + '/' + _star_config['genome_dir'],
+        outFileNamePrefix = OUTPUT_DIR + '/rsem_star_align/{sample}',
+        paired_end = '--paired-end' if PAIRED_END else '',
+    shell: '''(
+STAR_PATH=$(dirname $(which STAR))
+rsem-calculate-expression \
+    {params.paired_end} \
+    --star \
+    --star-path $STAR_PATH \
+    --star-gzipped-read-file \
+    --star-output-genome-bam \
+    -p {threads} \
+    {input.reads} \
+    {params.genomeDir}/RSEM_ref \
+    {params.outFileNamePrefix}
+mv {params.outFileNamePrefix}.STAR.genome.bam {params.outFileNamePrefix}.genome.bam
+)2>&1 | tee {log}'''
+
+rule samtools_sort_index_after_alignment:
+    input:
+        OUTPUT_DIR + '/rsem_star_align/{sample}.genome.bam'
+    output:
+        bam = OUTPUT_DIR + '/samtools_sort_index_after_alignment/{sample}.genome.sorted.bam',
+        bai = OUTPUT_DIR + '/samtools_sort_index_after_alignment/{sample}.genome.sorted.bam.bai',
+    threads: 12
+    log:
+        OUTPUT_DIR + '/samtools_sort_index_after_alignment/.log/{sample}.samtools_sort_index_after_alignment.log',
+    benchmark:
+        OUTPUT_DIR + '/benchmarks/samtools_sort_index_after_alignment.{sample}.benchmark.txt'
+    shell: '''(
+    samtools sort -@ {threads} \
+    -m 1G \
+    -o {output.bam} \
+    {input}
+
+    samtools index {output.bam}) 2>&1 | tee {log}'''
+
+
+rule fastqc_align:
+    input:
+        OUTPUT_DIR + '/rsem_star_align/{sample}.genome.bam',
+    output:
+        OUTPUT_DIR + '/fastqc_align/{sample}_fastqc.html',
+    log:
+        OUTPUT_DIR + '/fastqc_align/.log/{sample}.fastqc_align.log'
+    benchmark:
+        OUTPUT_DIR + '/benchmarks/fastqc_align.{sample}.benchmark.txt'
+    params:
+        symlink = OUTPUT_DIR + '/fastqc_align/{sample}.bam',
+        fastqc_dir= OUTPUT_DIR+ '/fastqc_align/',
+    shell: '''(
+python -c 'import os, os.path; os.symlink(os.path.relpath("{input}", os.path.dirname("{params.symlink}")), "{params.symlink}")'
+fastqc {params.symlink} -o {params.fastqc_dir}
+) 2>&1 | tee {log}'''
+
+
+rule rsem_calculate_expression:
+    input:
+        OUTPUT_DIR + '/rsem_star_align/{sample}.transcript.bam',
+    output:
+        OUTPUT_DIR + '/rsem_calculate_expression_using_dedup/{sample}.genes.results',
+        OUTPUT_DIR + '/rsem_calculate_expression_using_dedup/{sample}.isoforms.results',
+    log:
+        OUTPUT_DIR + '/rsem_calculate_expression_using_dedup/.log/{sample}.rsem_calculate_expression_using_dedup.log'
+    benchmark:
+        OUTPUT_DIR + '/benchmarks/{sample}.rsem_calculate_expression_using_dedup.txt'
+    params:
+        genomeDir = REFERENCE_DIR + '/' + _star_config['genome_dir'],
+        outFileNamePrefix = OUTPUT_DIR + '/rsem_calculate_expression_using_dedup/{sample}',
+        paired_end = '--paired-end' if PAIRED_END else '',
+    shell:'''(
+rsem-calculate-expression --alignments \
+    {params.paired_end} \
+    --no-bam-output \
+    {input} \
+    {params.genomeDir}/RSEM_ref \
+    {params.outFileNamePrefix}
+)2>&1 | tee {log}'''
+
+
+rule multiqc:
+    input: expand(OUTPUT_DIR + '/fastqc_seq/{sample}.{read}_fastqc.html', sample=config['samples'], read=READS),
+           expand(OUTPUT_DIR + '/rsem_star_align_flagstat/{sample}.rsem_star_align_flagstat.flagstat',sample=config['samples']),
+           expand(OUTPUT_DIR + '/fastqc_align/{sample}_fastqc.html',sample=config['samples']),
+    output: OUTPUT_DIR + '/multiqc/multiqc_report.html'
+    log: OUTPUT_DIR + '/multiqc/.log/multiqc_report.log'
+    benchmark: OUTPUT_DIR + '/benchmarks/multiqc.benchmark.txt'
+    params:
+        multiqc_dir= OUTPUT_DIR + '/multiqc/',
+        config_file = srcdir('config/multiqc_config.yaml'),
+    shell: '''
+(multiqc \
+    {OUTPUT_DIR} \
+    -o {params.multiqc_dir} \
+    --config {params.config_file}
+) 2>&1 | tee {log}'''
+
+
+rule deeptools_bigwig:
+    input:
+        OUTPUT_DIR + '/rsem_star_align/{sample}.genome.sorted.bam',
+    output: OUTPUT_DIR + '/deeptools_bigwig/{sample}.bw'
+    benchmark: OUTPUT_DIR + '/benchmarks/deeptools_bigwig.{sample}.benchmark.txt'
+    log:
+        OUTPUT_DIR + '/deeptools_bigwig/.log/{sample}.deeptools_bigwig.log'
+    shell: 'bamCoverage -b {input} -o {output} 2>&1 | tee {log}'
+
+
+
+
+
+def email(subject_prefix):
+    msg = 'config file:\n{}\nlog file:\n{}'.format(workflow.overwrite_configfile, logger.get_logfile())
+    email_config = config.get('email')
+    if not email_config:
+        print(subject_prefix, msg)
+    else:
+        command = "echo '{msg}' | mutt -s '{subject_prefix}{subject}' {to}".format(
+                to=email_config['to'],
+                subject_prefix=subject_prefix,
+                subject=email_config['subject'],
+                msg=msg,
+                )
+        shell(command)
+
+
+onstart:
+    email('Apricot started: ')
+
+onsuccess:
+    email('Apricot completed ok: ')
+
+onerror:
+    email('Apricot ERROR: ')
