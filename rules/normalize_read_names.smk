@@ -3,7 +3,7 @@ rule normalize_read_names:
         reads = lambda wildcards: expand(INPUT_DIR + '/{read_name}',
                                          read_name=config['samples'][wildcards.sample]),
     output:
-        reads = expand(OUTPUT_DIR + '/00-normalize_read_names/{{sample}}.{read}.fastq.gz',
+        reads = expand(OUTPUT_DIR + '/normalize_read_names/{{sample}}.{read}.fastq.gz',
                        read=READS),
     run:
         from os import symlink

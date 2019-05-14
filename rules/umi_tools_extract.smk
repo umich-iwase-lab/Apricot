@@ -3,11 +3,11 @@
 #               read=READS))
 
 def _build_inputs():
-    return expand(OUTPUT_DIR + '/00-normalize_read_names/{{sample}}.{read}.fastq.gz',
+    return expand(OUTPUT_DIR + '/normalize_read_names/{{sample}}.{read}.fastq.gz',
                   read=READS)
 
 def _build_outputs():
-    return expand(OUTPUT_DIR + '/01-umi_tools_extract/processed.{{sample}}.{read}.fastq.gz',
+    return expand(OUTPUT_DIR + '/umi_tools_extract/processed.{{sample}}.{read}.fastq.gz',
                   read=READS)
 
 def _build_read_flags(sample):
@@ -26,7 +26,7 @@ rule umi_tools_extract:
         _build_inputs()
     output:
         _build_outputs()
-    log: OUTPUT_DIR + '/01-umi_tools_extract/.log/{sample}.umi_tools_extract.log'
+    log: OUTPUT_DIR + '/umi_tools_extract/.log/{sample}.umi_tools_extract.log'
     benchmark: OUTPUT_DIR + '/benchmarks/umi_tools_extract.{sample}.benchmark.txt'
     params:
         read_flags = lambda wildcards: _build_read_flags(wildcards.sample)

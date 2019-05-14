@@ -1,14 +1,14 @@
 rule convert_dedup_for_rsem:
     input:
-        OUTPUT_DIR + '/07-umi_tools_dedup/{sample}.{type}.umi_tools_dedup.bam'
+        OUTPUT_DIR + '/umi_tools_dedup/{sample}.{type}.umi_tools_dedup.bam'
     output:
-        OUTPUT_DIR + '/09-convert_dedup_for_rsem/{sample}.{type}.convert_dedup_for_rsem.bam'
+        OUTPUT_DIR + '/convert_dedup_for_rsem/{sample}.{type}.convert_dedup_for_rsem.bam'
     benchmark:
         OUTPUT_DIR + '/benchmarks/{sample}.{type}.convert_dedup_for_rsem.benchmark.txt'
     log:
-        OUTPUT_DIR + '/09-convert_dedup_for_rsem/.log/{sample}.{type}.convert_dedup_for_rsem.log'
+        OUTPUT_DIR + '/convert_dedup_for_rsem/.log/{sample}.{type}.convert_dedup_for_rsem.log'
     params:
-        output_name = OUTPUT_DIR + '/09-convert_dedup_for_rsem/{sample}.{type}.convert_dedup_for_rsem'
+        output_name = OUTPUT_DIR + '/convert_dedup_for_rsem/{sample}.{type}.convert_dedup_for_rsem'
     threads:
         12
     shell:'''(

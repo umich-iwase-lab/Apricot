@@ -1,4 +1,4 @@
-ALL.append(expand(OUTPUT_DIR + '/06-combine_counts/{feature}_{metric}.txt',
+ALL.append(expand(OUTPUT_DIR + '/combine_counts/{feature}_{metric}.txt',
                   feature=['gene','isoform'],
                   metric=['expected_count', 'FPKM', 'TPM']))
 
@@ -11,12 +11,12 @@ rule combine_counts:
         isoforms = expand(_INPUT_DIR +'{sample}.isoforms.results',
                       sample=config['samples']),
     output:
-        gene = OUTPUT_DIR + '/06-combine_counts/gene_{metric}.txt',
-        isoform = OUTPUT_DIR + '/06-combine_counts/isoform_{metric}.txt',
+        gene = OUTPUT_DIR + '/combine_counts/gene_{metric}.txt',
+        isoform = OUTPUT_DIR + '/combine_counts/isoform_{metric}.txt',
     benchmark:
         OUTPUT_DIR + '/benchmarks/combine_counts_{metric}.benchmark.txt'
     log:
-        OUTPUT_DIR + '/06-combine_counts/.log/combine_counts_{metric}.log'
+        OUTPUT_DIR + '/combine_counts/.log/combine_counts_{metric}.log'
     params:
         metric = '{metric}',
         gene_count_script = srcdir('../scripts/combine.py'),

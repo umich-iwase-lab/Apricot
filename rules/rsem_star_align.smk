@@ -3,7 +3,7 @@ _star_config = config['genome_reference']['star']
 rule rsem_star_align:
     input:
         reads = lambda wildcards: expand(\
-                OUTPUT_DIR + '/01-umi_tools_extract/processed.{sample}.{read}.fastq.gz',
+                OUTPUT_DIR + '/umi_tools_extract/processed.{sample}.{read}.fastq.gz',
                 sample=wildcards.sample,
                 read=READS,
                 ),
@@ -13,12 +13,12 @@ rule rsem_star_align:
                 'genomeParameters.txt'
                 ),
     output:
-        OUTPUT_DIR + '/03-rsem_star_align/{sample}.genes.results',
-        OUTPUT_DIR + '/03-rsem_star_align/{sample}.isoforms.results',
-        OUTPUT_DIR + '/03-rsem_star_align/{sample}.genome.bam',
-        OUTPUT_DIR + '/03-rsem_star_align/{sample}.transcript.bam',
+        OUTPUT_DIR + '/rsem_star_align/{sample}.genes.results',
+        OUTPUT_DIR + '/rsem_star_align/{sample}.isoforms.results',
+        OUTPUT_DIR + '/rsem_star_align/{sample}.genome.bam',
+        OUTPUT_DIR + '/rsem_star_align/{sample}.transcript.bam',
     log:
-        OUTPUT_DIR + '/03-rsem_star_align/.log/{sample}.rsem_star_align.log'
+        OUTPUT_DIR + '/rsem_star_align/.log/{sample}.rsem_star_align.log'
     benchmark:
         OUTPUT_DIR + '/benchmarks/rsem_star_align.{sample}.benchmark.txt'
     threads: 12
@@ -26,7 +26,7 @@ rule rsem_star_align:
         mem_gb=30
     params:
         genomeDir = REFERENCE_DIR + '/' + _star_config['genome_dir'],
-        outFileNamePrefix = OUTPUT_DIR + '/03-rsem_star_align/{sample}',
+        outFileNamePrefix = OUTPUT_DIR + '/rsem_star_align/{sample}',
         paired_end = '--paired-end' if PAIRED_END else '',
     shell: '''(
 STAR_PATH=$(dirname $(which STAR))

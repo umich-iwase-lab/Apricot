@@ -1,8 +1,8 @@
-ALL.append(expand(OUTPUT_DIR + '/12-combine_counts_after_dedup/{feature}_{metric}.txt',
+ALL.append(expand(OUTPUT_DIR + '/combine_counts_after_dedup/{feature}_{metric}.txt',
                   feature=['gene','isoform'],
                   metric=['expected_count', 'FPKM', 'TPM']))
 
-_INPUT_DIR = OUTPUT_DIR + '/11-rsem_calculate_expression_using_dedup/'
+_INPUT_DIR = OUTPUT_DIR + '/rsem_calculate_expression_using_dedup/'
 
 rule combine_counts_after_dedup:
     input:
@@ -11,12 +11,12 @@ rule combine_counts_after_dedup:
         isoforms = expand(_INPUT_DIR + '{sample}.isoforms.results',
                           sample=config['samples']),
     output:
-        gene = OUTPUT_DIR + '/12-combine_counts_after_dedup/gene_{metric}.txt',
-        isoform = OUTPUT_DIR + '/12-combine_counts_after_dedup/isoform_{metric}.txt',
+        gene = OUTPUT_DIR + '/combine_counts_after_dedup/gene_{metric}.txt',
+        isoform = OUTPUT_DIR + '/combine_counts_after_dedup/isoform_{metric}.txt',
     benchmark:
         OUTPUT_DIR + '/benchmarks/combine_counts_after_dedup_{metric}.benchmark.txt'
     log:
-        OUTPUT_DIR + '/12-combine_counts_after_dedup/.log/combine_counts_after_dedup_{metric}.log'
+        OUTPUT_DIR + '/combine_counts_after_dedup/.log/combine_counts_after_dedup_{metric}.log'
     params:
         metric = '{metric}',
         gene_count_script = srcdir('../scripts/combine.py'),
