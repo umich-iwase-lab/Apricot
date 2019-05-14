@@ -6,12 +6,17 @@ INPUT_DIR = config['dirs']['input']
 OUTPUT_DIR = config['dirs']['output']
 REFERENCE_DIR = config['dirs']['reference']
 
-_read_counts = list(set([len(reads) for sample, reads in config['samples'].items()]))
-if len(_read_counts) != 1:
-    raise ValueError('All samples must be all single-end or paired-end')
-PAIRED_END = _read_counts[0] == 2
+def _get_paired_end():
+    _read_counts = list(set([len(reads) for sample, reads in config['samples'].items()]))
+    if len(_read_counts) != 1:
+        raise ValueError('Check config file: samples must be consistently single-end or paired-end')
+    _paired_end = _read_counts[0] == 2
+    reads = ['R1', 'R2'] if _paired_end else ['R1']
+    return _paired_end, reads
+
+PAIRED_END, READS = _get_paired_end()
 print('paired = {}'.format(PAIRED_END))
-READS = ['R1', 'R2'] if PAIRED_END else ['R1']
+
 
 ALL = []
 
