@@ -1,4 +1,11 @@
+from os.path import join, basename, dirname, relpath
+from os import symlink
 from snakemake.logging import logger
+import Apricot_version
+
+logger.info("Apricot Version:" + Apricot_version.__version__)
+
+
 if not config:
     raise ValueError('Please specify --configfile when launching snakemake')
 
@@ -21,7 +28,7 @@ PAIRED_END, READS = _get_paired_end()
 
 ALL = []
 
-ALL.append(expand(OUTPUT_DIR + '/deeptools_bigwig/{sample}.bw',
+ALL.extend(expand(OUTPUT_DIR + '/deeptools_bigwig/{sample}.bw',
                   sample=config['samples']))
 ALL.append(OUTPUT_DIR + '/multiqc/multiqc_report.html')
 
@@ -33,9 +40,23 @@ include: 'rules/rsem_star_align_flagstat.smk'
 include: 'rules/combine_counts.smk'
 
 
+'''
+Note: This Snakefile was created after the original barcoded version, and includes many of those same rules as-is,
+but also redefines some of those rules' inputs below in order to skip the steps needed for barcoded samples.
+
+Changing the invocations below or in the original rules can lead to divergence between the barcoded and non-barcoded
+pipelines, which will be difficult to keep track of. Make sure to change them together
+'''
+
+
 rule all:
     input:
         *ALL
+    output:
+        [join(OUTPUT_DIR, 'deliverables', basename(file)) for file in ALL]
+    run:
+        for in_file, out_file in zip(input, output):
+            symlink(relpath(in_file, dirname(out_file)), out_file)
 
 
 rule fastqc_seq:
@@ -171,6 +192,7 @@ rule multiqc:
 (multiqc \
     {OUTPUT_DIR} \
     -o {params.multiqc_dir} \
+    --force \
     --config {params.config_file}
 ) 2>&1 | tee {log}'''
 
