@@ -1,7 +1,7 @@
 # Apricot
 Iwase lab RNA-seq pipeline
 
-Apricot is a bulk RNA-Seq pipeline that accepts in-line barcoded, paried fastq files and produces sample alignments, count matrices, sample bigwigs, and an array of QC reports. It uses Snakemake as an automation framework and has been tested in several Unix/Linux environments. It uses STAR (wrapped by RSEM) for alignment and as such will requires peak memory on the order of 30Gb RAM to align using mm9/mm10.
+Apricot is a bulk RNA-Seq pipeline that accepts paired fastq files, either in-line barcoded or non-barcoded, and produces sample alignments, count matrices, sample bigwigs, and an array of QC reports. It uses Snakemake as an automation framework and has been tested in several Unix/Linux environments. It uses STAR (wrapped by RSEM) for alignment and as such will require peak memory on the order of 30Gb RAM to align using mm9/mm10. Using either barcoded samples or non-barcoded samples simply requires using the appropriately named Snakefile. An example of each can be found below.
 
 
 Quickstart
@@ -67,7 +67,7 @@ Quickstart
   - Edit to review/revise genome, directories, sequencing parameters
   - Add sample names and fastq names
 
-- Run workflow
+- Run workflow - barcoded samples
   - Setup screen and activate the conda environment
     ```screen -S project_A
     conda activate apricot
@@ -75,14 +75,14 @@ Quickstart
   - Show rule graph
     ```
     snakemake \
-        --snakefile ~/Apricot/Snakefile \
+        --snakefile ~/Apricot/Snakefile_barcoded \
         --configfile config.project_A.yaml \
         --rulegraph | dot -Tpdf > rulegraph.pdf
     ```
   - Dry-run to check rules and jobs that will be executed:
     ```
     snakemake \
-        --snakefile ~/Apricot/Snakefile \
+        --snakefile ~/Apricot/Snakefile_barcoded \
         --configfile config.project_A.yaml \
         --dryrun --quiet
     ```
@@ -90,8 +90,39 @@ Quickstart
   - Run, setting cores and memory
     ```
     snakemake \
-        --snakefile ../Apricot/Snakefile \
-        --configfile config.project_vallianatos.mm10_ercc.yaml \
+        --snakefile ../Apricot/Snakefile_barcoded \
+        --configfile config.project_A.yaml \
+        --resources mem_gb=105 \
+        --cores 36 \
+        -p
+    ```
+
+- Run workflow - non-barcoded samples
+  - Setup screen and activate the conda environment (same as above)
+    ```screen -S project_A
+    conda activate apricot
+    ```
+  - The next few steps use the Snakefile for non-barcoded samples
+  - Show rule graph
+    ```
+    snakemake \
+        --snakefile ~/Apricot/Snakefile_nobarcode \
+        --configfile config.project_B.yaml \
+        --rulegraph | dot -Tpdf > rulegraph.pdf
+    ```
+  - Dry-run to check rules and jobs that will be executed:
+    ```
+    snakemake \
+        --snakefile ~/Apricot/Snakefile_nobarcode \
+        --configfile config.project_B.yaml \
+        --dryrun --quiet
+    ```
+
+  - Run, setting cores and memory
+    ```
+    snakemake \
+        --snakefile ../Apricot/Snakefile_nobarcode \
+        --configfile config.project_B.yaml \
         --resources mem_gb=105 \
         --cores 36 \
         -p
