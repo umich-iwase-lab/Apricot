@@ -1,4 +1,4 @@
-ALL.append(expand(OUTPUT_DIR + '/combine_counts_after_dedup/{feature}_{metric}.txt',
+ALL.extend(expand(OUTPUT_DIR + '/combine_counts_after_dedup/{feature}_{metric}_dedup.txt',
                   feature=['gene','isoform'],
                   metric=['expected_count', 'FPKM', 'TPM']))
 
@@ -11,8 +11,8 @@ rule combine_counts_after_dedup:
         isoforms = expand(_INPUT_DIR + '{sample}.isoforms.results',
                           sample=config['samples']),
     output:
-        gene = OUTPUT_DIR + '/combine_counts_after_dedup/gene_{metric}.txt',
-        isoform = OUTPUT_DIR + '/combine_counts_after_dedup/isoform_{metric}.txt',
+        gene = OUTPUT_DIR + '/combine_counts_after_dedup/gene_{metric}_dedup.txt',
+        isoform = OUTPUT_DIR + '/combine_counts_after_dedup/isoform_{metric}_dedup.txt',
     benchmark:
         OUTPUT_DIR + '/benchmarks/combine_counts_after_dedup_{metric}.benchmark.txt'
     log:

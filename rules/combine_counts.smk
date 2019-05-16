@@ -1,4 +1,4 @@
-ALL.append(expand(OUTPUT_DIR + '/combine_counts/{feature}_{metric}.txt',
+ALL.extend(expand(OUTPUT_DIR + '/combine_counts/{feature}_{metric}.txt',
                   feature=['gene','isoform'],
                   metric=['expected_count', 'FPKM', 'TPM']))
 

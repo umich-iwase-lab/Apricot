@@ -1,4 +1,4 @@
-ALL.append(expand(OUTPUT_DIR + '/deeptools_bigwig/{sample}.bw',
+ALL.extend(expand(OUTPUT_DIR + '/deeptools_bigwig/{sample}.bw',
                   sample=config['samples']))
 
 rule deeptools_bigwig:
