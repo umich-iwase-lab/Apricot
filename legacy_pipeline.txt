@@ -1,0 +1,59 @@
+FASTQ & FASTQC files
+/mnt/siwase2/BACKUP_CHRISTINA/DM/FASTQ
+(multiQC done locally, html file attached)
+
+genome references (includes: mm10 fasta, mm10 gencode gtf, ERCC reference)
+/scratch/iwase-lab/CHRISTINA/DM_AMYG_MALE/02_STAR/genome_files
+
+latest runs, outputs
+1. UMI tools mark duplicates
+
+/scratch/iwase-lab/CHRISTINA/DM_AMYG_MALE/01_UMItools
+nohup umi_tools extract --stdin=/mnt/siwase2/BACKUP_CHRISTINA/DM/FASTQ/Sample1_R1_001.fastq.gz --extract-method=string --bc-pattern=NNNNNNNN --read2-in=/mnt/siwase2/BACKUP_CHRISTINA/DM/FASTQ/Sample1_R2_001.fastq.gz --stdout=processed.Sample01R1.fastq.gz --read2-out=processed.Sample01R2.fastq.gz &
+
+2. STAR genome generate
+
+/scratch/iwase-lab/CHRISTINA/DM_AMYG_MALE/02_STAR/01_genomegenerate_mm10erccexon
+
+nohup /home/saurabha/MAPPING_SOFTWARES/STAR/STAR-2.5.3a/bin/Linux_x86_64_static/STAR \
+--runMode genomeGenerate \
+--runThreadN 8 \
+--genomeFastaFiles /scratch/iwase-lab/CHRISTINA/DM_AMYG_MALE/02_STAR/genome_files/mm10.ercc.fa \
+--genomeDir /scratch/iwase-lab/CHRISTINA/DM_AMYG_MALE/02_STAR/01_genomegenerate_mm10erccexon \
+--sjdbGTFfile /scratch/iwase-lab/CHRISTINA/DM_AMYG_MALE/02_STAR/genome_files/gencode.vM17.annotation.ercc-exon.gtf \
+--sjdbOverhang 149 \
+&
+
+3. STAR mapping 
+
+[cvallia@hk DM_AMYG_MALE]$ cd 02_STAR/02_mapping_mm10erccexon
+
+nohup /home/saurabha/MAPPING_SOFTWARES/STAR/STAR-2.5.3a/bin/Linux_x86_64_static/STAR \
+--genomeDir "/scratch/iwase-lab/CHRISTINA/DM_AMYG_MALE/02_STAR/01_genomegenerate_mm10erccexon" \
+--runThreadN 12 \
+--readFilesIn "/scratch/iwase-lab/CHRISTINA/DM_AMYG_MALE/01_UMItools/processed.Sample12R1.fastq.gz" "/scratch/iwase-lab/CHRISTINA/DM_AMYG_MALE/01_UMItools/processed.Sample12R2.fastq.gz" \
+--readFilesCommand zcat \
+--outSAMtype BAM SortedByCoordinate \
+--outFileNamePrefix "sample12-" \
+--sjdbGTFfile "/scratch/iwase-lab/CHRISTINA/DM_AMYG_MALE/02_STAR/genome_files/gencode.vM17.annotation.ercc-exon.gtf" \
+--runMode alignReads --limitBAMsortRAM 64000000000 --outFilterType BySJout --outFilterMultimapNmax 20 --alignSJoverhangMin 8 --alignSJDBoverhangMin 1 --alignIntronMin 20 --outFilterMismatchNmax 999 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 --alignMatesGapMax 1000000 --alignIntronMax 1000000 --chimSegmentMin 20 \
+&
+
+4. UMI tools dedup
+
+/scratch/iwase-lab/CHRISTINA/DM_AMYG_MALE/03_UMItools
+nohup umi_tools dedup -I /scratch/iwase-lab/CHRISTINA/DM_AMYG_MALE/02_STAR/02_mapping_mm10erccexon/BAM_FILES/sample07-Aligned.sortedByCoord.out.bam --paired -S sample07_dedup.bam &
+
+5. Featurecounts
+
+/scratch/iwase-lab/CHRISTINA/DM_AMYG_MALE/04_FEATURECOUNTS/mm10_umidedup
+(perl script is in folder)
+
+6. Cuffdiff
+
+/scratch/iwase-lab/CHRISTINA/DM_AMYG_MALE/05_CUFFDIFF/mm10erccexon_umidedup
+(perl script is in folder)
+
+7. DESeq2
+attached (done locally)
+

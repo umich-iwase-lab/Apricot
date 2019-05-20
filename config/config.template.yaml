@@ -1,0 +1,40 @@
+#optional email config to send on run start/complete/error
+#email:
+#  subject: legacy_mm9
+#  to: cgates@umich.edu
+
+# Either absolute dirs or relative to where you launch snakemake
+dirs:
+  input: test/inputs
+  output: ../outputs.test
+  reference: /ccmb/BioinfCore/ActiveProjects/cgates/Iwase/reference/mm10_ercc # the reference folder that contains genome fasta file and gtf file
+
+# These files/dirs assumed to be inside reference dir specified above
+genome_reference:
+  fasta: mm10_ercc.fa
+  gtf: mm10_ercc.gencode.vM17.annotation.exon.gtf
+  star:
+    # star genome will be built if it doesn't exist
+    genome_dir: rsem_star_genome
+    # sjdbOverhang is optional; will default to read_length - 1
+    #sjdbOverhang: 149
+
+sequencing_parameters:
+  read_length: 150
+  #strand_flag
+  # '--rf'    Assumes a stranded library fr-firststrand, e.g. Trueseq
+  # '--fr'    Assumes a stranded library fr-secondstrand
+  # ''        Leave blank if unstranded
+  strand_flag: '--rf'
+
+samples:
+  SampleA:
+    - SampleA.R1.fastq.gz
+    - SampleA.R2.fastq.gz
+  SampleB:
+    - SampleB.R1.fastq.gz
+    - SampleB.R2.fastq.gz
+# - SampleC
+email:
+  subject: legacy_mm9
+  to: cgates@umich.edu

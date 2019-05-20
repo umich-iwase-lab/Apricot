@@ -1,0 +1,56 @@
+sequencing_parameters:
+  read_length: 150
+  #strand_flag
+  # '--rf'    Assumes a stranded library fr-firststrand, e.g. Trueseq
+  # '--fr'    Assumes a stranded library fr-secondstrand
+  # ''        Leave blank if unstranded
+  strand_flag: '--rf'
+
+dirs:
+  input: inputs
+  output: outputs
+  reference: /ccmb/BioinfCore/ActiveProjects/cgates/Iwase/reference/mm10_ercc
+
+genome_reference:
+  fasta: mm10_ercc.fa
+  gtf: mm10_ercc.gencode.vM17.annotation.exon.gtf
+  star:
+    genome_dir: rsem_star_genome
+
+samples:
+  Sample01-5cKO1:
+    - Sample1_R1_001.fastq.gz
+    - Sample1_R2_001.fastq.gz
+  Sample02-2aHET1:
+    - Sample2_R1_001.fastq.gz
+    - Sample2_R2_001.fastq.gz
+  Sample03-2aHET2:
+    - Sample3_R1_001.fastq.gz
+    - Sample3_R2_001.fastq.gz
+  Sample04-WT1:
+    - Sample4_R1_001.fastq.gz
+    - Sample4_R2_001.fastq.gz
+  Sample05-DM1:
+    - Sample5_R1_001.fastq.gz
+    - Sample5_R2_001.fastq.gz
+  Sample06-5cKO2:
+    - Sample6_R1_001.fastq.gz
+    - Sample6_R2_001.fastq.gz
+  Sample07-5cKO3:
+    - Sample7_R1_001.fastq.gz
+    - Sample7_R2_001.fastq.gz
+  Sample08-WT2:
+    - Sample8_R1_001.fastq.gz
+    - Sample8_R2_001.fastq.gz
+  Sample09-DM2:
+    - Sample9_R1_001.fastq.gz
+    - Sample9_R2_001.fastq.gz
+  Sample10-2aHET3:
+    - Sample10_R1_001.fastq.gz
+    - Sample10_R2_001.fastq.gz
+  Sample11-WT3:
+    - Sample11_R1_001.fastq.gz
+    - Sample11_R2_001.fastq.gz
+  Sample12-DM3:
+    - Sample12_R1_001.fastq.gz
+    - Sample12_R2_001.fastq.gz

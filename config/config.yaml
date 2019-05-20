@@ -1,0 +1,2 @@
+cores: 32
+resources: mem_in_gb=256
