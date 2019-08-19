@@ -21,11 +21,6 @@ genome_reference:
 
 sequencing_parameters:
   read_length: 150
-  #strand_flag
-  # '--rf'    Assumes a stranded library fr-firststrand, e.g. Trueseq
-  # '--fr'    Assumes a stranded library fr-secondstrand
-  # ''        Leave blank if unstranded
-  strand_flag: '--rf'
 
 samples:
   SampleA:
