@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.2.0.1 (8/19/2019)
+-------------------
+- Removed obsolete strand params from template config files
+
 0.2 (5/15/2019)
 ---------------
 - Added Snakefile_nobarcode, to be used on non-barcoded samples
