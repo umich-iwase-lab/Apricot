@@ -7,20 +7,33 @@ import sys
 
 import pandas as pd
 
-__version__ = '0.0.1'
+# 5/12/2022 v0.0.2 fixed bug in how sample names were derived from file globs (cgates)
+# v0.0.1 initial release
+
+__version__ = '0.0.2'
 _DESCRIPTION = \
 '''Accepts tab-separated sample isoform files and combines into single tab-separated matrix.'''
 
 def _commonsuffix(strings):
     return commonprefix(list(map(lambda s:s[::-1], strings)))[::-1]
 
+# Python 3.9 and older have str.removeprefix(), str.removesuffix(), but this works on prior versions too 
+def _remove_prefix_and_suffix(string, prefix, suffix):
+    if string.startswith(prefix):
+        string = string[len(prefix):]
+    if string.endswith(suffix):
+        string = string[:-len(suffix)]
+    return string
+
 def _build_sample_files(file_glob):
     sample_files = []
     file_names = glob(file_glob)
     prefix = commonpath(file_names)
+    print(prefix)
     suffix = _commonsuffix(file_names)
+    print(suffix)
     for file_name in sorted(file_names):
-        sample_name = file_name.lstrip(prefix).rstrip(suffix)
+        sample_name = _remove_prefix_and_suffix(file_name, prefix, suffix).lstrip('/')
         sample_files.append((sample_name, file_name))
     return sample_files
 

@@ -1,6 +1,9 @@
 Changelog
 =========
 
+0.2.0.2 (5/12/2022)
+- Fixed bug in how combine.py derives sample names from input files
+
 0.2.0.1 (8/19/2019)
 -------------------
 - Removed obsolete strand params from template config files
