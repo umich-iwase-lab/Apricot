@@ -211,7 +211,7 @@ rule deeptools_bigwig:
 
 
 def email(subject_prefix):
-    msg = 'config file:\n{}\nlog file:\n{}'.format(workflow.overwrite_configfile, logger.get_logfile())
+    msg = 'config file:\n{}\nlog file:\n{}'.format(str(list(workflow.configfiles)), logger.get_logfile())
     email_config = config.get('email')
     if not email_config:
         print(subject_prefix, msg)

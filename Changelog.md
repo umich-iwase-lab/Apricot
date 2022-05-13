@@ -1,6 +1,9 @@
 Changelog
 =========
 
+0.2.1.0 (5/13/2022)
+- Unpinned some program versions and adjusted Snakefile to accomodate new Snakemake implementation 
+
 0.2.0.2 (5/12/2022)
 - Fixed bug in how combine.py derives sample names from input files
 

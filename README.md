@@ -13,15 +13,19 @@ Quickstart
     ```
   - If necessary, install Miniconda following instructions here:
     https://conda.io/projects/conda/en/latest/user-guide/install/index.html
-  - Build and activate conda environment
+  - Install mamba, build and activate mamba environment
     ```
-    conda env create -f Apricot/envs/apricot.yml #first time only
+    # Install this in the base environ
+    conda install -c conda-forge mamba 
+    mamba create -n apricot --file Apricot/envs/mambda_unpinned.yml
     conda activate apricot
     ```
   - Review versions
     ```
     # brief list of key program versions
     cat Apricot/envs/apricot.yml
+    # more detail on key programs
+    conda list | egrep "$(awk -F '=' '{a=a$1" |"} END {print substr(a, 1, length(a)-1)}' Apricot/envs/mamba_unpinned.yml)"
     # full list of versions (including dependencies)
     conda list
     ```
