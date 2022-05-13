@@ -17,7 +17,7 @@ Quickstart
     ```
     # Install this in the base environ
     conda install -c conda-forge mamba 
-    mamba create -n apricot --file Apricot/envs/mambda_unpinned.yml
+    mamba create -n apricot -c bioconda -c conda-forge --file Apricot/envs/apricot_mamba.yml
     conda activate apricot
     ```
   - Review versions
